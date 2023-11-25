@@ -1,0 +1,1 @@
+fyne package -os windows -icon "./assets/icon.png"
