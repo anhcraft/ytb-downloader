@@ -13,6 +13,13 @@ import (
 var processes = make([]*Process, 0)
 var inputted = map[string]int{}
 
+func ClearProcesses() {
+	if !isDownloading {
+		processes = make([]*Process, 0)
+		inputted = map[string]int{}
+	}
+}
+
 func CountProcess() int {
 	return len(processes)
 }

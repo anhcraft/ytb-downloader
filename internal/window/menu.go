@@ -26,7 +26,7 @@ var progressBar binding.Float
 
 func OpenMenu(app fyne.App) fyne.Window {
 	win = app.NewWindow("Yt-dlp GUI")
-	ctn := container.NewBorder(nil, footer(), leftSide(), nil, rightSide())
+	ctn := container.NewBorder(header(app), footer(), leftSide(), nil, rightSide())
 	win.SetContent(ctn)
 	win.Resize(fyne.NewSize(800, 500))
 	win.SetFixedSize(true)
@@ -36,6 +36,19 @@ func OpenMenu(app fyne.App) fyne.Window {
 	win.CenterOnScreen()
 	win.ShowAndRun()
 	return win
+}
+
+func header(app fyne.App) fyne.CanvasObject {
+	toolbar := widget.NewToolbar(
+		widget.NewToolbarSpacer(),
+		widget.NewToolbarAction(theme.ContentClearIcon(), func() {
+			handle.ClearProcesses()
+		}),
+		widget.NewToolbarAction(theme.SettingsIcon(), func() {
+			OpenSettings(app)
+		}),
+	)
+	return toolbar
 }
 
 func footer() fyne.CanvasObject {

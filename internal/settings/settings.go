@@ -11,6 +11,7 @@ type Settings struct {
 	DownloadFolder      string `json:"downloadFolder,omitempty"`
 	FFmpegPath          string `json:"ffmpegPath,omitempty"`
 	ConcurrentDownloads int    `json:"concurrentDownloads,omitempty"`
+	ConcurrentFragments int    `json:"concurrentFragments,omitempty"`
 }
 
 func (s *Settings) GetDownloadFolder() string {
@@ -37,6 +38,8 @@ func NewSettings() *Settings {
 	return &Settings{
 		Format:              format.Default,
 		DownloadFolder:      "",
+		FFmpegPath:          "",
 		ConcurrentDownloads: 1,
+		ConcurrentFragments: 3,
 	}
 }
