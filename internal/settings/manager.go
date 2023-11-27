@@ -25,6 +25,7 @@ func Load() {
 		log.Printf("error unmarshalling settings file: %v\n", err)
 		settings = NewSettings()
 	}
+	settings.Normalize()
 }
 
 func Save() {

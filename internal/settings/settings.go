@@ -8,10 +8,26 @@ import (
 
 type Settings struct {
 	Format              string `json:"format,omitempty"`
+	EmbedThumbnail      string `json:"embedThumbnail,omitempty"`
 	DownloadFolder      string `json:"downloadFolder,omitempty"`
 	FFmpegPath          string `json:"ffmpegPath,omitempty"`
 	ConcurrentDownloads int    `json:"concurrentDownloads,omitempty"`
 	ConcurrentFragments int    `json:"concurrentFragments,omitempty"`
+}
+
+func (s *Settings) Normalize() {
+	if !format.IsValid(s.Format) {
+		s.Format = format.Default
+	}
+	if !format.IsValid(s.EmbedThumbnail) {
+		s.EmbedThumbnail = format.AudioOnly
+	}
+	if s.ConcurrentDownloads < 1 {
+		s.ConcurrentDownloads = 1
+	}
+	if s.ConcurrentFragments < 1 {
+		s.ConcurrentFragments = 1
+	}
 }
 
 func (s *Settings) GetDownloadFolder() string {
@@ -37,6 +53,7 @@ func (s *Settings) GetFFmpegPath() string {
 func NewSettings() *Settings {
 	return &Settings{
 		Format:              format.Default,
+		EmbedThumbnail:      format.AudioOnly,
 		DownloadFolder:      "",
 		FFmpegPath:          "",
 		ConcurrentDownloads: 1,
