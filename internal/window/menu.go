@@ -26,9 +26,13 @@ var progressBar binding.Float
 
 func OpenMenu(app fyne.App) fyne.Window {
 	win = app.NewWindow("Yt-dlp GUI")
-	ctn := container.NewBorder(header(app), footer(), leftSide(), nil, rightSide())
+	ctn := container.NewVBox(
+		header(app),
+		container.New(ui.NewHLayout(2, 0.4, 0.6), leftSide(), rightSide()),
+		footer(),
+	)
 	win.SetContent(ctn)
-	win.Resize(fyne.NewSize(800, 500))
+	win.Resize(fyne.NewSize(900, 500))
 	win.SetFixedSize(true)
 	win.SetPadded(true)
 	win.SetIcon(resource.ProgramIcon)
@@ -106,6 +110,13 @@ func topLeft() fyne.CanvasObject {
 	return container.NewVBox(input, btn)
 }
 
+func truncateString(s string, max int) string {
+	if len(s) > max {
+		return s[:max]
+	}
+	return s
+}
+
 func bottomLeft() fyne.CanvasObject {
 	fmtLabel := widget.NewLabel("Format")
 	fmtSelector := widget.NewSelect(
@@ -117,7 +128,7 @@ func bottomLeft() fyne.CanvasObject {
 	fmtSelector.SetSelected(settings.Get().Format)
 
 	downloadToLabel := widget.NewLabel("Download To")
-	downloadTo := widget.NewLabel(settings.Get().DownloadFolder)
+	downloadTo := widget.NewLabel(truncateString(settings.Get().DownloadFolder, 30))
 	downloadFolder := container.NewHBox(
 		downloadTo,
 		layout.NewSpacer(),
@@ -126,7 +137,7 @@ func bottomLeft() fyne.CanvasObject {
 				if uri != nil {
 					settings.Get().DownloadFolder = uri.Path()
 					settings.Save()
-					downloadTo.SetText(uri.Path())
+					downloadTo.SetText(truncateString(uri.Path(), 30))
 				}
 			}, win)
 		}),
@@ -189,7 +200,7 @@ func rightSide() fyne.CanvasObject {
 			}
 		}
 	}
-	table.SetColumnWidth(0, 320)
+	table.SetColumnWidth(0, 420)
 	table.SetColumnWidth(1, 110)
 	return table
 }
