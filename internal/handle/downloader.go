@@ -138,7 +138,7 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 							err = errors.New("error due to ffmpeg not installed")
 						} else if strings.Contains(line, "Requested format is not available") {
 							err = errors.New("requested format is not available")
-						} else if strings.HasPrefix(line, "aERROR:") {
+						} else if strings.HasPrefix(line, "ERROR:") {
 							err = errors.New(line)
 						} else {
 							log.Println("[yt-dlp]", line)
