@@ -71,8 +71,7 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 						//"--progress-template", "%(progress)j",
 						"--concurrent-fragments", strconv.Itoa(settings.Get().ConcurrentFragments),
 						"--abort-on-unavailable-fragments",
-						"-P", settings.Get().GetDownloadFolder(),
-						"--embed-thumbnail", "--embed-metadata"}
+						"-P", settings.Get().GetDownloadFolder()}
 
 					if fp := settings.Get().GetFFmpegPath(); fp != "" {
 						args = append(args, "--ffmpeg-location", fp)
@@ -83,12 +82,12 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 					if job.Format == format.VideoOnly {
 						args = append(args, "-f", "bestvideo", "--remux-video", "mp4")
 					} else if job.Format == format.AudioOnly {
-						args = append(args, "-f", "bestaudio", "--remux-video", "m4a")
+						args = append(args, "-f", "bestaudio", "-x", "--audio-quality", "0", "--audio-format", "m4a")
 					} else {
-						args = append(args, "--remux-video", "mp4")
+						args = append(args, "--merge-output-format", "mp4")
 					}
 
-					args = append(args, job.URL)
+					args = append(args, "--embed-thumbnail", "--embed-metadata", job.URL)
 
 					cmd := exec.Command("./yt-dlp.exe", args...)
 					log.Printf("Executing command %s\n", cmd.String())
@@ -141,6 +140,10 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 							log.Println(line)
 						}
 					}
+
+					defer func() {
+						onUpdate(float64(progress.Add(100-lastPercentage)) / totalProgress)
+					}()
 
 					if err1 = cmd.Wait(); err1 != nil && err == nil {
 						log.Println("Error on running command:", err1)
