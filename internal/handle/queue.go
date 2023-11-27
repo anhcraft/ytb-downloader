@@ -64,20 +64,41 @@ func submitVideoUrl(link string, name string, format string, onUpdate func()) {
 	onUpdate()
 	log.Printf("new video link: %s\n", link)
 	if p.Name == "" {
+		p.Name = p.URL
 		go fetchVideoName(p, onUpdate)
 	}
 }
 
 func fetchVideoName(p *Process, onUpdate func()) {
-	cmd := exec.Command("./yt-dlp.exe", "--get-title", p.URL)
-	log.Printf("Executing command %s\n", cmd.String())
-	bytes, err := cmd.CombinedOutput()
+	// somehow printing into the console does not support UTF8
+	// so the workaround is using a temporary file
+
+	temp, err := os.CreateTemp("", hash(p.URL))
+	defer func(temp *os.File) {
+		err := temp.Close()
+		if err != nil {
+			log.Println("error closing temp file:", err)
+		}
+	}(temp)
 	if err != nil {
-		p.Name = p.URL
-		onUpdate()
+		log.Println("error creating temp file:", err)
+		return
+	}
+	tempPath := temp.Name()
+
+	cmd := exec.Command("./yt-dlp.exe", "--ignore-errors", "--no-warnings", "--print-to-file", "title", tempPath, p.URL)
+	log.Printf("Executing command %s\n", cmd.String())
+	if err := cmd.Run(); err != nil {
 		log.Println("error running command:", err)
 		return
 	}
+
+	bytes, err := os.ReadFile(tempPath)
+	if err != nil {
+		log.Println("error creating temp file:", err)
+		return
+	}
+
 	p.Name = string(bytes)
 	onUpdate()
 }
