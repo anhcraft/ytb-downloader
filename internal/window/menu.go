@@ -41,7 +41,8 @@ func OpenMenu(app fyne.App) fyne.Window {
 func header(app fyne.App) fyne.CanvasObject {
 	toolbar := widget.NewToolbar(
 		widget.NewToolbarSpacer(),
-		widget.NewToolbarAction(theme.ContentClearIcon(), func() {
+		widget.NewToolbarAction(resource.EraserIcon, func() {
+			_ = progressBar.Set(0)
 			handle.ClearProcesses()
 		}),
 		widget.NewToolbarAction(theme.SettingsIcon(), func() {
@@ -188,7 +189,7 @@ func rightSide() fyne.CanvasObject {
 			}
 		}
 	}
-	table.SetColumnWidth(0, 330)
+	table.SetColumnWidth(0, 320)
 	table.SetColumnWidth(1, 110)
 	return table
 }
