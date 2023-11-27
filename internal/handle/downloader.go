@@ -77,17 +77,30 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 						args = append(args, "--ffmpeg-location", fp)
 					}
 
+					embedThumbnail := settings.Get().EmbedThumbnail
+					thumbnail := embedThumbnail == format.Default || job.Format == embedThumbnail
+
+					if thumbnail {
+						args = append(args, "--embed-thumbnail")
+					}
+
 					// Choose the best quality format
 					// Remux the video to mp4 or audio to m4a to support thumbnail embedding
 					if job.Format == format.VideoOnly {
-						args = append(args, "-f", "bestvideo", "--remux-video", "mp4")
+						args = append(args, "-f", "bestvideo")
+						if thumbnail {
+							args = append(args, "--remux-video", "mp4")
+						}
 					} else if job.Format == format.AudioOnly {
-						args = append(args, "-f", "bestaudio", "-x", "--audio-quality", "0", "--audio-format", "m4a")
-					} else {
+						args = append(args, "-f", "bestaudio")
+						if thumbnail {
+							args = append(args, "-x", "--audio-quality", "0", "--audio-format", "m4a")
+						}
+					} else if thumbnail {
 						args = append(args, "--merge-output-format", "mp4")
 					}
 
-					args = append(args, "--embed-thumbnail", "--embed-metadata", job.URL)
+					args = append(args, job.URL)
 
 					cmd := exec.Command("./yt-dlp.exe", args...)
 					log.Printf("Executing command %s\n", cmd.String())

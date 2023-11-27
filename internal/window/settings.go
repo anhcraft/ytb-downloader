@@ -7,6 +7,7 @@ import (
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
+	"ytb-downloader/internal/format"
 	"ytb-downloader/internal/resource"
 	"ytb-downloader/internal/settings"
 )
@@ -77,10 +78,20 @@ func settingsContainer() fyne.CanvasObject {
 		widget.NewSliderWithData(1, 10, concurrentFragments),
 	)
 
+	thumbnailLabel := widget.NewLabel("Embed Thumbnail")
+	thumbnailSelector := widget.NewSelect(
+		[]string{format.Default, format.VideoOnly, format.AudioOnly},
+		func(value string) {
+			settings.Get().EmbedThumbnail = value
+			settings.Save()
+		})
+	thumbnailSelector.SetSelected(settings.Get().EmbedThumbnail)
+
 	return container.New(
 		layout.NewFormLayout(),
 		ffmpegLabel, ffmpegSelector,
 		concurrentDownloadsLabel, concurrentDownloadsSelector,
 		concurrentFragmentsLabel, concurrentFragmentsSelector,
+		thumbnailLabel, thumbnailSelector,
 	)
 }
