@@ -6,6 +6,6 @@ var ProgramIcon fyne.Resource
 var EraserIcon fyne.Resource
 
 func init() {
-	ProgramIcon, _ = fyne.LoadResourceFromPath("assets/ytb.svg")
+	ProgramIcon, _ = fyne.LoadResourceFromPath("assets/ytb.png")
 	EraserIcon, _ = fyne.LoadResourceFromPath("assets/eraser.svg")
 }
