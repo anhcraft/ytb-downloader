@@ -136,8 +136,12 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 							onUpdate(float64(progress.Add(deltaPercentage)) / totalProgress)
 						} else if strings.Contains(line, "ffmpeg not found") {
 							err = errors.New("error due to ffmpeg not installed")
+						} else if strings.Contains(line, "Requested format is not available") {
+							err = errors.New("requested format is not available")
+						} else if strings.HasPrefix(line, "aERROR:") {
+							err = errors.New(line)
 						} else {
-							log.Println(line)
+							log.Println("[yt-dlp]", line)
 						}
 					}
 
