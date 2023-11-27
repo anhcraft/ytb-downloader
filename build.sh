@@ -1,1 +1,1 @@
-fyne package -os windows -icon "./assets/icon.png"
+fyne package -os windows -icon "./assets/ytb.png"
