@@ -2,6 +2,8 @@
 
 A simple GUI for yt-dlp.
 
+![https://i.imgur.com/vJOuWBb.png](https://i.imgur.com/vJOuWBb.png)
+
 ## Features
 - Download the best format
 - Download video-only or audio-only
