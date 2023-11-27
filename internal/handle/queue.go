@@ -39,13 +39,13 @@ func SubmitUrl(link string, format string, onUpdate func()) {
 		// TODO lock & disable until finishing
 		go submitPlaylistUrl(link, format, onUpdate)
 	} else if u.Path == "/watch" {
-		link := "https://www.youtube.com/watch?v=" + u.Query().Get("v")
-		submitVideoUrl(link, link, format, onUpdate)
+		link = "https://www.youtube.com/watch?v=" + u.Query().Get("v")
+		submitVideoUrl(link, "", format, onUpdate)
 	} else if u.Host == "youtu.be" {
-		link := "https://www.youtube.com/watch?v=" + u.Path[1:]
-		submitVideoUrl(link, link, format, onUpdate)
+		link = "https://www.youtube.com/watch?v=" + u.Path[1:]
+		submitVideoUrl(link, "", format, onUpdate)
 	} else {
-		submitVideoUrl(link, link, format, onUpdate)
+		submitVideoUrl(link, "", format, onUpdate)
 	}
 }
 
@@ -63,7 +63,9 @@ func submitVideoUrl(link string, name string, format string, onUpdate func()) {
 	processes = append(processes, p)
 	onUpdate()
 	log.Printf("new video link: %s\n", link)
-	go fetchVideoName(p, onUpdate)
+	if p.Name == "" {
+		go fetchVideoName(p, onUpdate)
+	}
 }
 
 func fetchVideoName(p *Process, onUpdate func()) {
@@ -71,6 +73,8 @@ func fetchVideoName(p *Process, onUpdate func()) {
 	log.Printf("Executing command %s\n", cmd.String())
 	bytes, err := cmd.CombinedOutput()
 	if err != nil {
+		p.Name = p.URL
+		onUpdate()
 		log.Println("error running command:", err)
 		return
 	}
