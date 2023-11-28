@@ -7,9 +7,9 @@ import (
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
-	"ytb-downloader/internal/format"
 	"ytb-downloader/internal/resource"
 	"ytb-downloader/internal/settings"
+	"ytb-downloader/internal/thumbnail"
 )
 
 func OpenSettings(app fyne.App) fyne.Window {
@@ -96,7 +96,7 @@ func settingsContainer() fyne.CanvasObject {
 
 	thumbnailLabel := widget.NewLabel("Embed Thumbnail")
 	thumbnailSelector := widget.NewSelect(
-		[]string{format.Default, format.VideoOnly, format.AudioOnly},
+		[]string{thumbnail.Always, thumbnail.VideoOnly, thumbnail.AudioOnly, thumbnail.Never},
 		func(value string) {
 			settings.Get().EmbedThumbnail = value
 			settings.Save()

@@ -13,6 +13,7 @@ import (
 	"syscall"
 	"ytb-downloader/internal/format"
 	"ytb-downloader/internal/settings"
+	"ytb-downloader/internal/thumbnail"
 )
 
 var isDownloading bool
@@ -79,7 +80,7 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 					}
 
 					embedThumbnail := settings.Get().EmbedThumbnail
-					thumbnail := embedThumbnail == format.Default || job.Format == embedThumbnail
+					thumbnail := embedThumbnail != thumbnail.Never && (embedThumbnail == thumbnail.Always || job.Format == embedThumbnail)
 
 					if thumbnail {
 						args = append(args, "--embed-thumbnail")

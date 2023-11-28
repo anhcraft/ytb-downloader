@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 	"ytb-downloader/internal/format"
+	"ytb-downloader/internal/thumbnail"
 )
 
 type Settings struct {
@@ -24,8 +25,8 @@ func (s *Settings) Normalize() {
 	if !format.IsValid(s.Format) {
 		s.Format = format.Default
 	}
-	if !format.IsValid(s.EmbedThumbnail) {
-		s.EmbedThumbnail = format.AudioOnly
+	if !thumbnail.IsValid(s.EmbedThumbnail) {
+		s.EmbedThumbnail = thumbnail.AudioOnly
 	}
 	if s.ConcurrentDownloads < 1 {
 		s.ConcurrentDownloads = 1
@@ -72,7 +73,7 @@ func (s *Settings) GetFFmpegPath() string {
 func NewSettings() *Settings {
 	return &Settings{
 		Format:              format.Default,
-		EmbedThumbnail:      format.AudioOnly,
+		EmbedThumbnail:      thumbnail.AudioOnly,
 		DownloadFolder:      "",
 		YTdlpPath:           "",
 		FFmpegPath:          "",
