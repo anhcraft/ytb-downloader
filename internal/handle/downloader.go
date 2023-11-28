@@ -80,9 +80,10 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 					}
 
 					embedThumbnail := settings.Get().EmbedThumbnail
-					thumbnail := embedThumbnail != thumbnail.Never && (embedThumbnail == thumbnail.Always || job.Format == embedThumbnail)
+					shouldEmbedThumbnail := embedThumbnail != thumbnail.Never &&
+						(embedThumbnail == thumbnail.Always || job.Format == embedThumbnail)
 
-					if thumbnail {
+					if shouldEmbedThumbnail {
 						args = append(args, "--embed-thumbnail")
 					}
 
@@ -90,15 +91,15 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 					// Remux the video to mp4 or audio to m4a to support thumbnail embedding
 					if job.Format == format.VideoOnly {
 						args = append(args, "-f", "bestvideo")
-						if thumbnail {
+						if shouldEmbedThumbnail {
 							args = append(args, "--remux-video", "mp4")
 						}
 					} else if job.Format == format.AudioOnly {
 						args = append(args, "-f", "bestaudio")
-						if thumbnail {
+						if shouldEmbedThumbnail {
 							args = append(args, "-x", "--audio-quality", "0", "--audio-format", "m4a")
 						}
-					} else if thumbnail {
+					} else if shouldEmbedThumbnail {
 						args = append(args, "--merge-output-format", "mp4")
 					}
 
