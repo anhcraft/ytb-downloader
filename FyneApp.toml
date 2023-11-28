@@ -1,0 +1,8 @@
+Website = "https://github.com/anhcraft/ytb-downloader"
+
+[Details]
+Icon = "./assets/icon.png"
+Name = "YTB Downloader"
+ID = "dev.anhcraft.ytbdownloader"
+Version = "1.0.1"
+Build = 1
