@@ -1,0 +1,1 @@
+iscc script.iss
