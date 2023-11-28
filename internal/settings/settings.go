@@ -3,6 +3,7 @@ package settings
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"ytb-downloader/internal/format"
 )
 
@@ -16,6 +17,8 @@ type Settings struct {
 }
 
 func (s *Settings) Normalize() {
+	s.FFmpegPath = strings.TrimSpace(s.FFmpegPath)
+	s.DownloadFolder = strings.TrimSpace(s.DownloadFolder)
 	if !format.IsValid(s.Format) {
 		s.Format = format.Default
 	}
@@ -43,9 +46,12 @@ func (s *Settings) GetDownloadFolder() string {
 }
 
 func (s *Settings) GetFFmpegPath() string {
+	if s.FFmpegPath == "" {
+		return "./ffmpeg.exe"
+	}
 	_, err := os.Stat(s.FFmpegPath)
 	if err != nil {
-		return ""
+		return "./ffmpeg.exe"
 	}
 	return s.FFmpegPath
 }
