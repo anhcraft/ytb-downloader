@@ -11,12 +11,14 @@ type Settings struct {
 	Format              string `json:"format,omitempty"`
 	EmbedThumbnail      string `json:"embedThumbnail,omitempty"`
 	DownloadFolder      string `json:"downloadFolder,omitempty"`
+	YTdlpPath           string `json:"ytdlpPath,omitempty"`
 	FFmpegPath          string `json:"ffmpegPath,omitempty"`
 	ConcurrentDownloads int    `json:"concurrentDownloads,omitempty"`
 	ConcurrentFragments int    `json:"concurrentFragments,omitempty"`
 }
 
 func (s *Settings) Normalize() {
+	s.YTdlpPath = strings.TrimSpace(s.YTdlpPath)
 	s.FFmpegPath = strings.TrimSpace(s.FFmpegPath)
 	s.DownloadFolder = strings.TrimSpace(s.DownloadFolder)
 	if !format.IsValid(s.Format) {
@@ -45,6 +47,17 @@ func (s *Settings) GetDownloadFolder() string {
 	return s.DownloadFolder
 }
 
+func (s *Settings) GetYTdlpPath() string {
+	if s.YTdlpPath == "" {
+		return "./yt-dlp.exe"
+	}
+	_, err := os.Stat(s.YTdlpPath)
+	if err != nil {
+		return "./yt-dlp.exe"
+	}
+	return s.YTdlpPath
+}
+
 func (s *Settings) GetFFmpegPath() string {
 	if s.FFmpegPath == "" {
 		return "./ffmpeg.exe"
@@ -61,6 +74,7 @@ func NewSettings() *Settings {
 		Format:              format.Default,
 		EmbedThumbnail:      format.AudioOnly,
 		DownloadFolder:      "",
+		YTdlpPath:           "",
 		FFmpegPath:          "",
 		ConcurrentDownloads: 1,
 		ConcurrentFragments: 3,

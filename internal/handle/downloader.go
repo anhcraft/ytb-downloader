@@ -103,7 +103,7 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 
 					args = append(args, job.URL)
 
-					cmd := exec.Command("./yt-dlp.exe", args...)
+					cmd := exec.Command(settings.Get().GetYTdlpPath(), args...)
 					cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 					log.Printf("Executing command %s\n", cmd.String())
 

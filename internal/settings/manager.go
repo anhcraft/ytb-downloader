@@ -14,6 +14,10 @@ func Get() *Settings {
 	return settings
 }
 
+func Reset() {
+	settings = NewSettings()
+}
+
 func Load() {
 	ctn, err := os.ReadFile(SETTINGS_FILE)
 	if err != nil {

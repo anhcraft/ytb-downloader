@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"strings"
 	"syscall"
+	"ytb-downloader/internal/settings"
 )
 
 var processes = make([]*Process, 0)
@@ -87,7 +88,7 @@ func fetchVideoName(p *Process, onUpdate func()) {
 	}
 	tempPath := temp.Name()
 
-	cmd := exec.Command("./yt-dlp.exe", "--skip-download", "--ignore-errors", "--no-warnings", "--print-to-file", "title", tempPath, p.URL)
+	cmd := exec.Command(settings.Get().GetYTdlpPath(), "--skip-download", "--ignore-errors", "--no-warnings", "--print-to-file", "title", tempPath, p.URL)
 	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 	log.Printf("Executing command %s\n", cmd.String())
 	if err := cmd.Run(); err != nil {
@@ -131,7 +132,7 @@ func submitPlaylistUrl(link string, format string, onUpdate func()) {
 	}
 	tempPath := temp.Name()
 
-	cmd := exec.Command("./yt-dlp.exe", "--skip-download", "--flat-playlist", "--ignore-errors", "--no-warnings", "--print-to-file", "url,title", tempPath, link)
+	cmd := exec.Command(settings.Get().GetYTdlpPath(), "--skip-download", "--flat-playlist", "--ignore-errors", "--no-warnings", "--print-to-file", "url,title", tempPath, link)
 	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 	log.Printf("Executing command %s\n", cmd.String())
 	if err := cmd.Run(); err != nil {

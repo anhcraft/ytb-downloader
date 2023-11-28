@@ -26,6 +26,22 @@ func OpenSettings(app fyne.App) fyne.Window {
 }
 
 func settingsContainer() fyne.CanvasObject {
+	ytdlpLabel := widget.NewLabel("Yt-dlp Path")
+	ytdlpPath := widget.NewLabel(settings.Get().YTdlpPath)
+	ytdlpSelector := container.NewHBox(
+		ytdlpPath,
+		layout.NewSpacer(),
+		widget.NewButton("...", func() {
+			dialog.ShowFileOpen(func(uri fyne.URIReadCloser, err error) {
+				if uri != nil {
+					settings.Get().YTdlpPath = uri.URI().Path()
+					settings.Save()
+					ytdlpPath.SetText(uri.URI().Path())
+				}
+			}, win)
+		}),
+	)
+
 	ffmpegLabel := widget.NewLabel("FFmpeg Path")
 	ffmpegPath := widget.NewLabel(settings.Get().FFmpegPath)
 	ffmpegSelector := container.NewHBox(
@@ -89,6 +105,7 @@ func settingsContainer() fyne.CanvasObject {
 
 	return container.New(
 		layout.NewFormLayout(),
+		ytdlpLabel, ytdlpSelector,
 		ffmpegLabel, ffmpegSelector,
 		concurrentDownloadsLabel, concurrentDownloadsSelector,
 		concurrentFragmentsLabel, concurrentFragmentsSelector,
