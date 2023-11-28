@@ -17,5 +17,6 @@ A simple GUI for yt-dlp.
 - [FFmpeg](https://ffmpeg.org/) including `ffmpeg` and `ffprobe`
 
 ## Notes
-- For Youtube, if thumbnail is enabled, audio-only format is .m4a, otherwise, audio format is opus (default Windows player may not support opus)
-- Tested sites: Youtube, Reddit, Tiktok, Twitter, Weibo
+- Tested sites: Youtube, Reddit, Tiktok, Twitter, Weibo. Other sites will work as long as yt-dlp support
+- External fonts are required if you need CJK support. The installer already covers this
+- Default installation path on Windows: `C:\Program Files (x86)\YTB Downloader`
