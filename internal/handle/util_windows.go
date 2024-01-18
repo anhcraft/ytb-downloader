@@ -1,5 +1,10 @@
 package handle
 
-func decorateCmd(cmd *Cmd) {
+import (
+	"os/exec"
+	"syscall"
+)
+
+func decorateCmd(cmd *exec.Cmd) {
 	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 }
