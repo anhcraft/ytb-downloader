@@ -8,7 +8,6 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-	"syscall"
 	"ytb-downloader/internal/settings"
 )
 
@@ -89,7 +88,7 @@ func fetchVideoName(p *Process, onUpdate func()) {
 	tempPath := temp.Name()
 
 	cmd := exec.Command(settings.Get().GetYTdlpPath(), "--skip-download", "--ignore-errors", "--no-warnings", "--print-to-file", "title", tempPath, p.URL)
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	decorateCmd(cmd)
 	log.Printf("Executing command %s\n", cmd.String())
 	if err := cmd.Run(); err != nil {
 		log.Println("error running command:", err)
@@ -133,7 +132,7 @@ func submitPlaylistUrl(link string, format string, onUpdate func()) {
 	tempPath := temp.Name()
 
 	cmd := exec.Command(settings.Get().GetYTdlpPath(), "--skip-download", "--flat-playlist", "--ignore-errors", "--no-warnings", "--print-to-file", "url,title", tempPath, link)
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	decorateCmd(cmd)
 	log.Printf("Executing command %s\n", cmd.String())
 	if err := cmd.Run(); err != nil {
 		log.Println("error running command:", err)
