@@ -10,7 +10,6 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
-	"syscall"
 	"ytb-downloader/internal/format"
 	"ytb-downloader/internal/settings"
 	"ytb-downloader/internal/thumbnail"
@@ -106,7 +105,7 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 					args = append(args, job.URL)
 
 					cmd := exec.Command(settings.Get().GetYTdlpPath(), args...)
-					cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+					decorateCmd(cmd)
 					log.Printf("Executing command %s\n", cmd.String())
 
 					stdout, err1 := cmd.StdoutPipe()
