@@ -48,3 +48,7 @@ Example configuration for Linux environment:
 
 ## Notes
 - If you use the Windows installer, the default installation path is `C:\Program Files (x86)\YTB Downloader`
+
+## Building
+- To build the program, first install Fyne: `go install fyne.io/fyne/v2/cmd/fyne@latest`
+- Build the program: `sudo ./build.sh`
