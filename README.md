@@ -13,6 +13,7 @@ A simple GUI for yt-dlp.
 - Embed thumbnail
 - Concurrent downloading
 - Continue downloading after interrupt
+- Logging to file and console
 - CJK font support
 
 ## Requirement
@@ -42,7 +43,8 @@ Example configuration for Linux environment:
   "ytdlpPath":"/yt-dlp_linux",
   "ffmpegPath":"/usr/bin/ffmpeg",
   "concurrentDownloads":1,
-  "concurrentFragments":3
+  "concurrentFragments":3,
+  "logPath": "./log.txt"
 }
 ```
 
