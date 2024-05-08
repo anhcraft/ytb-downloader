@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"errors"
 	"io"
-	"log"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -63,7 +62,7 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 						semaphore.Done()
 					}()
 
-					log.Printf("downloading %s\n", job.URL)
+					downloaderLogger.Printf("downloading %s\n", job.URL)
 					job.Status = Downloading
 					onUpdate(float64(progress.Load()) / totalProgress)
 
@@ -106,11 +105,11 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 
 					cmd := exec.Command(settings.Get().GetYTdlpPath(), args...)
 					decorateCmd(cmd)
-					log.Printf("Executing command %s\n", cmd.String())
+					downloaderLogger.Printf("Executing command %s\n", cmd.String())
 
 					stdout, err1 := cmd.StdoutPipe()
 					if err1 != nil {
-						log.Println("Error creating StdoutPipe:", err1)
+						downloaderLogger.Println("Error creating StdoutPipe:", err1)
 						err = err1
 						onUpdate(float64(progress.Load()) / totalProgress)
 						return
@@ -118,14 +117,14 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 
 					stderr, err1 := cmd.StderrPipe()
 					if err1 != nil {
-						log.Println("Error creating StderrPipe:", err1)
+						downloaderLogger.Println("Error creating StderrPipe:", err1)
 						err = err1
 						onUpdate(float64(progress.Load()) / totalProgress)
 						return
 					}
 
 					if err1 = cmd.Start(); err1 != nil {
-						log.Println("Error starting command:", err1)
+						downloaderLogger.Println("Error starting command:", err1)
 						err = err1
 						onUpdate(float64(progress.Load()) / totalProgress)
 						return
@@ -140,7 +139,7 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 							if err1 == io.EOF {
 								break
 							}
-							log.Println("Error reading line:", err1)
+							downloaderLogger.Println("Error reading line:", err1)
 							break
 						}
 
@@ -157,7 +156,7 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 						} else if strings.HasPrefix(line, "ERROR:") {
 							err = errors.New(line)
 						} else {
-							log.Println("[yt-dlp]", line)
+							downloaderLogger.Println("[yt-dlp]", line)
 						}
 					}
 
@@ -166,7 +165,7 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 					}()
 
 					if err1 = cmd.Wait(); err1 != nil && err == nil {
-						log.Println("Error on running command:", err1)
+						downloaderLogger.Println("Error on running command:", err1)
 						err = err1
 						onUpdate(float64(progress.Load()) / totalProgress)
 						return

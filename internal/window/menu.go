@@ -9,8 +9,8 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
+	"github.com/rs/zerolog"
 	"image/color"
-	"log"
 	"net/url"
 	"strings"
 	"ytb-downloader/internal/format"
@@ -23,8 +23,10 @@ import (
 var win fyne.Window
 var table *widget.Table
 var progressBar binding.Float
+var logger zerolog.Logger
 
 func OpenMenu(app fyne.App) fyne.Window {
+	logger = settings.Get().GetLogger().With().Str("scope", "gui/menu").Logger()
 	win = app.NewWindow("Yt-dlp GUI")
 	ctn := container.NewVBox(
 		header(app),
@@ -99,7 +101,7 @@ func topLeft() fyne.CanvasObject {
 					table.Refresh()
 				})
 			} else {
-				log.Printf("invalid URL: %s\n", v)
+				logger.Printf("invalid URL: %s\n", v)
 			}
 		}
 		input.SetText("")

@@ -3,7 +3,6 @@ package handle
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"log"
 	"net/url"
 	"os"
 	"os/exec"
@@ -63,7 +62,7 @@ func submitVideoUrl(link string, name string, format string, onUpdate func()) {
 	}
 	processes = append(processes, p)
 	onUpdate()
-	log.Printf("new video link: %s\n", link)
+	queueLogger.Printf("new video link: %s\n", link)
 	if p.Name == "" {
 		p.Name = p.URL
 		go fetchVideoName(p, onUpdate)
@@ -78,26 +77,26 @@ func fetchVideoName(p *Process, onUpdate func()) {
 	defer func(temp *os.File) {
 		err := temp.Close()
 		if err != nil {
-			log.Println("error closing temp file:", err)
+			queueLogger.Println("error closing temp file:", err)
 		}
 	}(temp)
 	if err != nil {
-		log.Println("error creating temp file:", err)
+		queueLogger.Println("error creating temp file:", err)
 		return
 	}
 	tempPath := temp.Name()
 
 	cmd := exec.Command(settings.Get().GetYTdlpPath(), "--skip-download", "--ignore-errors", "--no-warnings", "--print-to-file", "title", tempPath, p.URL)
 	decorateCmd(cmd)
-	log.Printf("Executing command %s\n", cmd.String())
+	queueLogger.Printf("Executing command %s\n", cmd.String())
 	if err := cmd.Run(); err != nil {
-		log.Println("error running command:", err)
+		queueLogger.Println("error running command:", err)
 		return
 	}
 
 	bytes, err := os.ReadFile(tempPath)
 	if err != nil {
-		log.Println("error creating temp file:", err)
+		queueLogger.Println("error creating temp file:", err)
 		return
 	}
 
@@ -112,7 +111,7 @@ func hash(link string) string {
 }
 
 func submitPlaylistUrl(link string, format string, onUpdate func()) {
-	log.Printf("new playlist link: %s\n", link)
+	queueLogger.Printf("new playlist link: %s\n", link)
 
 	// ./yt-dlp.exe --flat-playlist --ignore-errors --no-warnings --print-to-file "title,url" "temp.txt" ""
 	// somehow printing into the console does not support UTF8
@@ -122,34 +121,34 @@ func submitPlaylistUrl(link string, format string, onUpdate func()) {
 	defer func(temp *os.File) {
 		err := temp.Close()
 		if err != nil {
-			log.Println("error closing temp file:", err)
+			queueLogger.Println("error closing temp file:", err)
 		}
 	}(temp)
 	if err != nil {
-		log.Println("error creating temp file:", err)
+		queueLogger.Println("error creating temp file:", err)
 		return
 	}
 	tempPath := temp.Name()
 
 	cmd := exec.Command(settings.Get().GetYTdlpPath(), "--skip-download", "--flat-playlist", "--ignore-errors", "--no-warnings", "--print-to-file", "url,title", tempPath, link)
 	decorateCmd(cmd)
-	log.Printf("Executing command %s\n", cmd.String())
+	queueLogger.Printf("Executing command %s\n", cmd.String())
 	if err := cmd.Run(); err != nil {
-		log.Println("error running command:", err)
+		queueLogger.Println("error running command:", err)
 		return
 	}
 
 	bytes, err := os.ReadFile(tempPath)
 	if err != nil {
-		log.Println("error creating temp file:", err)
+		queueLogger.Println("error creating temp file:", err)
 		return
 	}
 	lines := strings.Split(string(bytes), "\n")
 
-	log.Printf("found %d videos in the playlist\n", len(lines)>>1)
+	queueLogger.Printf("found %d videos in the playlist\n", len(lines)>>1)
 	for i := 0; i+1 < len(lines); i += 2 {
 		// TODO better way to check private videos
-		log.Println(lines[i+1])
+		queueLogger.Println(lines[i+1])
 		if strings.Contains(lines[i+1], "[Private video]") {
 			continue
 		}

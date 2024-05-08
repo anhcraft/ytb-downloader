@@ -1,6 +1,8 @@
 package settings
 
 import (
+	"fmt"
+	"github.com/rs/zerolog"
 	"os"
 	"path/filepath"
 	"strings"
@@ -16,11 +18,28 @@ type Settings struct {
 	FFmpegPath          string `json:"ffmpegPath,omitempty"`
 	ConcurrentDownloads int    `json:"concurrentDownloads,omitempty"`
 	ConcurrentFragments int    `json:"concurrentFragments,omitempty"`
+	LogPath             string `json:"logPath,omitempty"`
+	globalLogger        *zerolog.Logger
+}
+
+func (s *Settings) GetLogger() *zerolog.Logger {
+	if s.globalLogger == nil {
+		file, err := os.OpenFile(s.GetLogPath(), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0666)
+		if err != nil {
+			panic(fmt.Sprintf("Error creating log file: %v\n", err))
+		}
+		consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout}
+		multi := zerolog.MultiLevelWriter(consoleWriter, file)
+		logger := zerolog.New(multi).With().Timestamp().Logger()
+		s.globalLogger = &logger
+	}
+	return s.globalLogger
 }
 
 func (s *Settings) Normalize() {
 	s.YTdlpPath = strings.TrimSpace(s.YTdlpPath)
 	s.FFmpegPath = strings.TrimSpace(s.FFmpegPath)
+	s.LogPath = strings.TrimSpace(s.LogPath)
 	s.DownloadFolder = strings.TrimSpace(s.DownloadFolder)
 	if !format.IsValid(s.Format) {
 		s.Format = format.Default
@@ -70,6 +89,17 @@ func (s *Settings) GetFFmpegPath() string {
 	return s.FFmpegPath
 }
 
+func (s *Settings) GetLogPath() string {
+	if s.LogPath == "" {
+		return "./log.txt"
+	}
+	_, err := os.Stat(s.LogPath)
+	if err != nil {
+		return "./log.txt"
+	}
+	return s.LogPath
+}
+
 func NewSettings() *Settings {
 	return &Settings{
 		Format:              format.Default,
@@ -79,5 +109,6 @@ func NewSettings() *Settings {
 		FFmpegPath:          "",
 		ConcurrentDownloads: 1,
 		ConcurrentFragments: 3,
+		LogPath:             "",
 	}
 }

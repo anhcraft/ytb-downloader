@@ -103,6 +103,22 @@ func settingsContainer() fyne.CanvasObject {
 		})
 	thumbnailSelector.SetSelected(settings.Get().EmbedThumbnail)
 
+	logPathLabel := widget.NewLabel("Path to log file")
+	logPathInput := widget.NewLabel(settings.Get().LogPath)
+	logPathSelector := container.NewHBox(
+		logPathInput,
+		layout.NewSpacer(),
+		widget.NewButton("...", func() {
+			dialog.ShowFileOpen(func(uri fyne.URIReadCloser, err error) {
+				if uri != nil {
+					settings.Get().LogPath = uri.URI().Path()
+					settings.Save()
+					logPathInput.SetText(uri.URI().Path())
+				}
+			}, win)
+		}),
+	)
+
 	return container.New(
 		layout.NewFormLayout(),
 		ytdlpLabel, ytdlpSelector,
@@ -110,5 +126,6 @@ func settingsContainer() fyne.CanvasObject {
 		concurrentDownloadsLabel, concurrentDownloadsSelector,
 		concurrentFragmentsLabel, concurrentFragmentsSelector,
 		thumbnailLabel, thumbnailSelector,
+		logPathLabel, logPathSelector,
 	)
 }
