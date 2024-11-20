@@ -102,7 +102,7 @@ func (s *Settings) GetLogPath() string {
 }
 
 func (s *Settings) GetExtraYtdlpOptions() []string {
-	return strings.Split(s.ExtraYtdlpOptions, " ")
+	return strings.Fields(s.ExtraYtdlpOptions)
 }
 
 func NewSettings() *Settings {
