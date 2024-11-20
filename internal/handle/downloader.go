@@ -56,6 +56,7 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 					var err error
 					defer func() {
 						if err != nil {
+							downloaderLogger.Println(err)
 							job.Status = Error
 							onError(err)
 						}
@@ -109,7 +110,6 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 
 					stdout, err1 := cmd.StdoutPipe()
 					if err1 != nil {
-						downloaderLogger.Println("Error creating StdoutPipe:", err1)
 						err = err1
 						onUpdate(float64(progress.Load()) / totalProgress)
 						return
@@ -117,14 +117,12 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 
 					stderr, err1 := cmd.StderrPipe()
 					if err1 != nil {
-						downloaderLogger.Println("Error creating StderrPipe:", err1)
 						err = err1
 						onUpdate(float64(progress.Load()) / totalProgress)
 						return
 					}
 
 					if err1 = cmd.Start(); err1 != nil {
-						downloaderLogger.Println("Error starting command:", err1)
 						err = err1
 						onUpdate(float64(progress.Load()) / totalProgress)
 						return
@@ -165,7 +163,6 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 					}()
 
 					if err1 = cmd.Wait(); err1 != nil && err == nil {
-						downloaderLogger.Println("Error on running command:", err1)
 						err = err1
 						onUpdate(float64(progress.Load()) / totalProgress)
 						return
