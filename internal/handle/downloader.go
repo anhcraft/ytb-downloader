@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"os/exec"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -49,6 +50,16 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 	semaphore.Add(len(processing))
 	jobs := make(chan *Process, len(processing))
 
+	commonArgs := append(settings.Get().GetExtraYtdlpOptions(), "--ignore-errors", "--no-warnings",
+		"--progress", "--newline",
+		//"--progress-template", "%(progress)j",
+		"--concurrent-fragments", strconv.Itoa(settings.Get().ConcurrentFragments),
+		"--abort-on-unavailable-fragments",
+		"-P", settings.Get().GetDownloadFolder())
+	if fp := settings.Get().GetFFmpegPath(); fp != "" {
+		commonArgs = append(commonArgs, "--ffmpeg-location", fp)
+	}
+
 	for i := 0; i < settings.Get().ConcurrentDownloads; i++ {
 		go func() {
 			for job := range jobs {
@@ -67,16 +78,7 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 					job.Status = Downloading
 					onUpdate(float64(progress.Load()) / totalProgress)
 
-					args := []string{"--ignore-errors", "--no-warnings",
-						"--progress", "--newline",
-						//"--progress-template", "%(progress)j",
-						"--concurrent-fragments", strconv.Itoa(settings.Get().ConcurrentFragments),
-						"--abort-on-unavailable-fragments",
-						"-P", settings.Get().GetDownloadFolder()}
-
-					if fp := settings.Get().GetFFmpegPath(); fp != "" {
-						args = append(args, "--ffmpeg-location", fp)
-					}
+					args := slices.Clone(commonArgs)
 
 					embedThumbnail := settings.Get().EmbedThumbnail
 					shouldEmbedThumbnail := embedThumbnail != thumbnail.Never &&

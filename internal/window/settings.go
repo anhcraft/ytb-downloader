@@ -22,6 +22,9 @@ func OpenSettings(app fyne.App) fyne.Window {
 	win.SetIcon(resource.ProgramIcon)
 	//win.CenterOnScreen()
 	win.Show()
+	win.SetOnClosed(func() {
+		settings.Save()
+	})
 	return win
 }
 
@@ -119,6 +122,14 @@ func settingsContainer() fyne.CanvasObject {
 		}),
 	)
 
+	extraYtpOptLabel := widget.NewLabel("Extra Yt-dlp options (space separated)")
+	extraYtpOptInputBinding := binding.NewString()
+	_ = extraYtpOptInputBinding.Set(settings.Get().ExtraYtdlpOptions)
+	extraYtpOptInputBinding.AddListener(binding.NewDataListener(func() {
+		settings.Get().ExtraYtdlpOptions, _ = extraYtpOptInputBinding.Get()
+	}))
+	extraYtpOptInput := widget.NewEntryWithData(extraYtpOptInputBinding)
+
 	return container.New(
 		layout.NewFormLayout(),
 		ytdlpLabel, ytdlpSelector,
@@ -127,5 +138,6 @@ func settingsContainer() fyne.CanvasObject {
 		concurrentFragmentsLabel, concurrentFragmentsSelector,
 		thumbnailLabel, thumbnailSelector,
 		logPathLabel, logPathSelector,
+		extraYtpOptLabel, extraYtpOptInput,
 	)
 }

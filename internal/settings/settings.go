@@ -19,6 +19,7 @@ type Settings struct {
 	ConcurrentDownloads int    `json:"concurrentDownloads,omitempty"`
 	ConcurrentFragments int    `json:"concurrentFragments,omitempty"`
 	LogPath             string `json:"logPath,omitempty"`
+	ExtraYtdlpOptions   string `json:"extraYtdlpOptions,omitempty"`
 	globalLogger        *zerolog.Logger
 }
 
@@ -100,6 +101,10 @@ func (s *Settings) GetLogPath() string {
 	return s.LogPath
 }
 
+func (s *Settings) GetExtraYtdlpOptions() []string {
+	return strings.Split(s.ExtraYtdlpOptions, " ")
+}
+
 func NewSettings() *Settings {
 	return &Settings{
 		Format:              format.Default,
@@ -110,5 +115,6 @@ func NewSettings() *Settings {
 		ConcurrentDownloads: 1,
 		ConcurrentFragments: 3,
 		LogPath:             "",
+		ExtraYtdlpOptions:   "",
 	}
 }
