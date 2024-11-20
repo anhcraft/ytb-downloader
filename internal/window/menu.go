@@ -181,18 +181,20 @@ func rightSide() fyne.CanvasObject {
 			return handle.CountProcess(), 2
 		},
 		func() fyne.CanvasObject {
-			label := widget.NewLabel("")
+			label := NewTableEntry()
 			label.Truncation = fyne.TextTruncateEllipsis
 			return label
 		},
 		func(i widget.TableCellID, o fyne.CanvasObject) {
 			p := handle.GetProcess(i.Row)
+			entry := o.(*TableEntry)
+			entry.url = p.URL
 			if i.Col == 0 {
-				o.(*widget.Label).Alignment = fyne.TextAlignLeading
-				o.(*widget.Label).SetText(p.Name)
+				entry.Alignment = fyne.TextAlignLeading
+				entry.SetText(p.Name)
 			} else {
-				o.(*widget.Label).Alignment = fyne.TextAlignCenter
-				o.(*widget.Label).SetText(p.Status.String())
+				entry.Alignment = fyne.TextAlignCenter
+				entry.SetText(p.Status.String())
 			}
 		})
 	table.ShowHeaderRow = true
@@ -211,4 +213,28 @@ func rightSide() fyne.CanvasObject {
 	table.SetColumnWidth(0, 420)
 	table.SetColumnWidth(1, 110)
 	return table
+}
+
+type TableEntry struct {
+	widget.Label
+	menu *fyne.Menu
+	url  string
+}
+
+func (b *TableEntry) TappedSecondary(e *fyne.PointEvent) {
+	widget.ShowPopUpMenuAtPosition(b.menu, fyne.CurrentApp().Driver().CanvasForObject(b), e.AbsolutePosition)
+}
+
+func NewTableEntry() *TableEntry {
+	b := &TableEntry{}
+	b.menu = fyne.NewMenu("",
+		fyne.NewMenuItem("Copy URL", func() {
+			win.Clipboard().SetContent(b.url)
+		}),
+		fyne.NewMenuItem("Copy Title", func() {
+			win.Clipboard().SetContent(b.Text)
+		}),
+	)
+	b.ExtendBaseWidget(b)
+	return b
 }
