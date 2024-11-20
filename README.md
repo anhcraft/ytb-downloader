@@ -6,7 +6,7 @@ A simple GUI for yt-dlp.
 
 ## Features
 - Support various websites (as long as yt-dlp supports)
-  - Tested sites: Youtube, Reddit, Tiktok, Twitter, Weibo
+  - Tested sites: Youtube, Reddit, Tiktok, Twitter/X, Weibo
 - Fetch videos from playlist
 - Download the best format
 - Download video-only or audio-only
@@ -50,6 +50,7 @@ Example configuration for Linux environment:
 
 ## Notes
 - If you use the Windows installer, the default installation path is `C:\Program Files (x86)\YTB Downloader`
+- `"ERROR: [WinError 32] The process cannot access the file because it is being used by another process:"`: might happen when you download the video into the folder currently opening in the IDE. To fix, pick a different download location.
 
 ## Building
 - To build the program, first install Fyne: `go install fyne.io/fyne/v2/cmd/fyne@latest`
