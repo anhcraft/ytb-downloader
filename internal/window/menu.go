@@ -22,6 +22,7 @@ import (
 
 var win fyne.Window
 var table *widget.Table
+var input *widget.Entry
 var progressBar binding.Float
 var logger zerolog.Logger
 
@@ -42,6 +43,10 @@ func OpenMenu(app fyne.App) fyne.Window {
 	win.CenterOnScreen()
 	win.ShowAndRun()
 	return win
+}
+
+func appendUrl(s string) {
+	input.SetText(input.Text + "\n" + s)
 }
 
 func header(app fyne.App) fyne.CanvasObject {
@@ -89,7 +94,7 @@ func leftSide() fyne.CanvasObject {
 }
 
 func topLeft() fyne.CanvasObject {
-	input := widget.NewMultiLineEntry()
+	input = widget.NewMultiLineEntry()
 	input.SetPlaceHolder("Enter URL(s) of videos, playlists, etc")
 	input.SetMinRowsVisible(12)
 
@@ -149,8 +154,9 @@ func bottomLeft() fyne.CanvasObject {
 		if !handle.Download(func(progress float64) {
 			_ = progressBar.Set(progress)
 			table.Refresh()
-		}, func(err error) {
+		}, func(err error, url string) {
 			dialog.ShowError(err, win)
+			appendUrl(url) // append error url
 			table.Refresh()
 		}, func() {
 			table.Refresh()

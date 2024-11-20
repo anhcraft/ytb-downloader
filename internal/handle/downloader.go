@@ -17,7 +17,7 @@ import (
 var isDownloading bool
 var downloadLock sync.Mutex
 
-func Download(onUpdate func(progress float64), onError func(err error), onFinish func(), format string) bool {
+func Download(onUpdate func(progress float64), onError func(err error, url string), onFinish func(), format string) bool {
 	downloadLock.Lock()
 	success := false
 	if !isDownloading {
@@ -42,7 +42,7 @@ func Download(onUpdate func(progress float64), onError func(err error), onFinish
 	return success
 }
 
-func _download(onUpdate func(progress float64), onFinish func(), onError func(err error), processing []*Process) {
+func _download(onUpdate func(progress float64), onFinish func(), onError func(err error, url string), processing []*Process) {
 	totalProgress := float64(len(processing) * 100)
 	var progress atomic.Int32
 	var semaphore sync.WaitGroup
@@ -58,7 +58,7 @@ func _download(onUpdate func(progress float64), onFinish func(), onError func(er
 						if err != nil {
 							downloaderLogger.Println(err)
 							job.Status = Error
-							onError(err)
+							onError(err, job.URL)
 						}
 						semaphore.Done()
 					}()
