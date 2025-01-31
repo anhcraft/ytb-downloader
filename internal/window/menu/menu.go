@@ -17,8 +17,8 @@ import (
 	"ytb-downloader/internal/handle"
 	"ytb-downloader/internal/resource"
 	"ytb-downloader/internal/settings"
-	"ytb-downloader/internal/ui"
 	"ytb-downloader/internal/ui/component"
+	layout2 "ytb-downloader/internal/ui/layout"
 	settingsWindow "ytb-downloader/internal/window/settings"
 )
 
@@ -33,7 +33,7 @@ func OpenMenu(app fyne.App) fyne.Window {
 	win = app.NewWindow("Yt-dlp GUI")
 	ctn := container.NewVBox(
 		header(app),
-		container.New(ui.NewHLayout(2, 0.4, 0.6), leftSide(), rightSide()),
+		container.New(layout2.NewHLayout(2, 0.4, 0.6), leftSide(), rightSide()),
 		footer(),
 	)
 	win.SetContent(ctn)
@@ -70,11 +70,11 @@ func footer() fyne.CanvasObject {
 	bg.SetMinSize(fyne.NewSize(1, 5))
 	fg := canvas.NewRectangle(color.RGBA{R: 86, G: 186, B: 245, A: 255})
 	fg.SetMinSize(fyne.NewSize(1, 5))
-	cont := container.New(ui.NewZLayout(2), bg, fg)
+	cont := container.New(layout2.NewZLayout(2), bg, fg)
 	progressBar = binding.NewFloat()
 	progressBar.AddListener(binding.NewDataListener(func() {
 		v, _ := progressBar.Get()
-		cont.Layout.(*ui.ZLayout).SetSize(1, float32(v))
+		cont.Layout.(*layout2.ZLayout).SetSize(1, float32(v))
 		cont.Refresh()
 	}))
 	_ = progressBar.Set(0)
