@@ -10,6 +10,7 @@ import (
 	"ytb-downloader/internal/resource"
 	"ytb-downloader/internal/settings"
 	"ytb-downloader/internal/thumbnail"
+	"ytb-downloader/internal/ui/component"
 )
 
 func OpenSettings(app fyne.App) fyne.Window {
@@ -35,7 +36,7 @@ func settingsContainer() fyne.CanvasObject {
 		ytdlpPath,
 		layout.NewSpacer(),
 		widget.NewButton("...", func() {
-			dialog.ShowFileOpen(func(uri fyne.URIReadCloser, err error) {
+			component.OpenFileSelector(settings.Get().YTdlpPath, func(uri fyne.URIReadCloser, err error) {
 				if uri != nil {
 					settings.Get().YTdlpPath = uri.URI().Path()
 					settings.Save()
@@ -51,7 +52,7 @@ func settingsContainer() fyne.CanvasObject {
 		ffmpegPath,
 		layout.NewSpacer(),
 		widget.NewButton("...", func() {
-			dialog.ShowFileOpen(func(uri fyne.URIReadCloser, err error) {
+			component.OpenFileSelector(settings.Get().FFmpegPath, func(uri fyne.URIReadCloser, err error) {
 				if uri != nil {
 					settings.Get().FFmpegPath = uri.URI().Path()
 					settings.Save()
