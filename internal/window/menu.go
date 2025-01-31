@@ -18,6 +18,7 @@ import (
 	"ytb-downloader/internal/resource"
 	"ytb-downloader/internal/settings"
 	"ytb-downloader/internal/ui"
+	"ytb-downloader/internal/ui/component"
 )
 
 var win fyne.Window
@@ -140,7 +141,7 @@ func bottomLeft() fyne.CanvasObject {
 		downloadTo,
 		layout.NewSpacer(),
 		widget.NewButton("...", func() {
-			dialog.ShowFolderOpen(func(uri fyne.ListableURI, err error) {
+			component.OpenFolderSelector(settings.Get().DownloadFolder, func(uri fyne.ListableURI, err error) {
 				if uri != nil {
 					settings.Get().DownloadFolder = uri.Path()
 					settings.Save()
