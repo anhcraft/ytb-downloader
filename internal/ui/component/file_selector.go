@@ -6,6 +6,7 @@ import (
 	"fyne.io/fyne/v2/storage"
 	"os"
 	"path/filepath"
+	"ytb-downloader/internal/constants"
 )
 
 func getDir(path string) string {
@@ -38,6 +39,7 @@ func OpenFileSelector(defaultLocation string, callback func(fyne.URIReadCloser, 
 	}
 
 	selector.Show()
+	selector.Resize(fyne.NewSize(constants.FileDialogWidth, constants.FileDialogHeight))
 }
 
 func OpenFolderSelector(defaultLocation string, callback func(fyne.ListableURI, error), parent fyne.Window) {
@@ -53,4 +55,5 @@ func OpenFolderSelector(defaultLocation string, callback func(fyne.ListableURI, 
 	}
 
 	selector.Show()
+	selector.Resize(fyne.NewSize(constants.FileDialogWidth, constants.FileDialogHeight))
 }

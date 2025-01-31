@@ -7,6 +7,7 @@ import (
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
+	"ytb-downloader/internal/constants"
 	"ytb-downloader/internal/resource"
 	"ytb-downloader/internal/settings"
 	"ytb-downloader/internal/thumbnail"
@@ -19,7 +20,7 @@ func OpenSettings(app fyne.App) fyne.Window {
 	win = app.NewWindow("Settings")
 	ctn := container.NewVBox(settingsContainer())
 	win.SetContent(ctn)
-	win.Resize(fyne.NewSize(600, 400))
+	win.Resize(fyne.NewSize(constants.SettingWindowWidth, constants.SettingWindowHeight))
 	win.SetFixedSize(true)
 	win.SetPadded(true)
 	win.SetIcon(resource.ProgramIcon)

@@ -13,6 +13,7 @@ import (
 	"image/color"
 	"net/url"
 	"strings"
+	"ytb-downloader/internal/constants"
 	"ytb-downloader/internal/format"
 	"ytb-downloader/internal/handle"
 	"ytb-downloader/internal/resource"
@@ -33,11 +34,11 @@ func OpenMenu(app fyne.App) fyne.Window {
 	win = app.NewWindow("Yt-dlp GUI")
 	ctn := container.NewVBox(
 		header(app),
-		container.New(layout2.NewHLayout(2, 0.4, 0.6), leftSide(), rightSide()),
+		container.New(layout2.NewHLayout(2, 0.35, 0.65), leftSide(), rightSide()),
 		footer(),
 	)
 	win.SetContent(ctn)
-	win.Resize(fyne.NewSize(900, 500))
+	win.Resize(fyne.NewSize(constants.MainWindowWidth, constants.MainWindowHeight))
 	win.SetFixedSize(true)
 	win.SetPadded(true)
 	win.SetIcon(resource.ProgramIcon)
@@ -91,6 +92,7 @@ func leftSide() fyne.CanvasObject {
 		sep,
 		space,
 		bottomLeft(),
+		space,
 	)
 	return cont
 }
@@ -98,7 +100,7 @@ func leftSide() fyne.CanvasObject {
 func topLeft() fyne.CanvasObject {
 	input = widget.NewMultiLineEntry()
 	input.SetPlaceHolder("Enter URL(s) of videos, playlists, etc")
-	input.SetMinRowsVisible(12)
+	input.SetMinRowsVisible(16)
 
 	btn := widget.NewButton("Fetch", func() {
 		for _, v := range strings.Split(input.Text, "\n") {
@@ -212,8 +214,8 @@ func rightSide() fyne.CanvasObject {
 			}
 		}
 	}
-	table.SetColumnWidth(0, 420)
-	table.SetColumnWidth(1, 110)
+	table.SetColumnWidth(0, 520)
+	table.SetColumnWidth(1, 120)
 	return table
 }
 
