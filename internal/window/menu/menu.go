@@ -1,4 +1,4 @@
-package window
+package menu
 
 import (
 	"fyne.io/fyne/v2"
@@ -19,6 +19,7 @@ import (
 	"ytb-downloader/internal/settings"
 	"ytb-downloader/internal/ui"
 	"ytb-downloader/internal/ui/component"
+	settingsWindow "ytb-downloader/internal/window/settings"
 )
 
 var win fyne.Window
@@ -58,7 +59,7 @@ func header(app fyne.App) fyne.CanvasObject {
 			handle.ClearProcesses()
 		}),
 		widget.NewToolbarAction(theme.SettingsIcon(), func() {
-			OpenSettings(app)
+			settingsWindow.OpenSettings(app)
 		}),
 	)
 	return toolbar

@@ -6,7 +6,7 @@ import (
 	"ytb-downloader/internal/handle"
 	"ytb-downloader/internal/settings"
 	"ytb-downloader/internal/ui/theme"
-	"ytb-downloader/internal/window"
+	"ytb-downloader/internal/window/menu"
 )
 
 var myApp fyne.App
@@ -16,5 +16,5 @@ func Init() {
 	handle.InitLogger()
 	myApp = app.New()
 	myApp.Settings().SetTheme(&theme.CustomTheme{})
-	window.OpenMenu(myApp)
+	menu.OpenMenu(myApp)
 }

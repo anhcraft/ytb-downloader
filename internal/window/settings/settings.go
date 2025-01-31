@@ -1,4 +1,4 @@
-package window
+package settings
 
 import (
 	"fyne.io/fyne/v2"
@@ -13,8 +13,10 @@ import (
 	"ytb-downloader/internal/ui/component"
 )
 
+var win fyne.Window
+
 func OpenSettings(app fyne.App) fyne.Window {
-	win = app.NewWindow("Settings")
+	win := app.NewWindow("Settings")
 	ctn := container.NewVBox(settingsContainer())
 	win.SetContent(ctn)
 	win.Resize(fyne.NewSize(600, 400))
