@@ -232,6 +232,13 @@ func NewTableEntry() *TableEntry {
 			entry.req.SetStatus(request.StatusTerminated)
 			table.Refresh()
 		}),
+		fyne.NewMenuItem("Remove", func() {
+			if entry.req.Status() == request.StatusDownloading {
+				return
+			}
+			request.GetTable().Remove(entry.req)
+			table.Refresh()
+		}),
 	)
 	entry.ExtendBaseWidget(entry)
 	return entry
