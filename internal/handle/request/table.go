@@ -38,7 +38,17 @@ func (rt *Table) Get(index int) *Request {
 }
 
 func (rt *Table) Clear() {
-	rt.requests = rt.GetAllByStatus(StatusDownloading)
+	var result []*Request
+	for _, r := range rt.requests {
+		// only keep Downloading requests, they must be terminated to be cleared
+		if r.Status() == StatusDownloading {
+			result = append(result, r)
+		} else {
+			// If race condition happens, the worker will receive this signal
+			r.SetStatus(StatusTerminated)
+		}
+	}
+	rt.requests = result
 }
 
 func (rt *Table) GetAllByStatus(status uint32) []*Request {
