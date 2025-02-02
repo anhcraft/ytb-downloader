@@ -3,6 +3,8 @@ package request
 import (
 	"net/url"
 	"sync/atomic"
+	"ytb-downloader/internal/settings"
+	"ytb-downloader/internal/shellquote"
 )
 
 const (
@@ -84,12 +86,20 @@ func (req *Request) TitleFetchCmdArgs() []string {
 	return req.titleFetchCmdArgs
 }
 
+func (req *Request) GetTitleFetchCommand() string {
+	return settings.Get().GetYTdlpPath() + " " + shellquote.Join(req.TitleFetchCmdArgs())
+}
+
 func (req *Request) SetTitleFetchCmdArgs(titleFetchCmdArgs []string) {
 	req.titleFetchCmdArgs = titleFetchCmdArgs
 }
 
 func (req *Request) DownloadCmdArgs() []string {
 	return req.downloadCmdArgs
+}
+
+func (req *Request) GetDownloadCommand() string {
+	return settings.Get().GetYTdlpPath() + " " + shellquote.Join(req.DownloadCmdArgs())
 }
 
 func (req *Request) SetDownloadCmdArgs(downloadCmdArgs []string) {

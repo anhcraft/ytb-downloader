@@ -9,7 +9,6 @@ import (
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 	"github.com/rs/zerolog"
-	"strings"
 	"ytb-downloader/internal/constants"
 	"ytb-downloader/internal/format"
 	"ytb-downloader/internal/handle/request"
@@ -243,7 +242,7 @@ func NewTableEntry() *TableEntry {
 			win.Clipboard().SetContent(entry.req.Title())
 		}),
 		fyne.NewMenuItem("Copy Download command", func() {
-			win.Clipboard().SetContent(settings.Get().GetYTdlpPath() + " " + strings.Join(entry.req.DownloadCmdArgs(), " "))
+			win.Clipboard().SetContent(entry.req.GetDownloadCommand())
 		}),
 		fyne.NewMenuItem("Terminate", func() {
 			entry.req.SetStatus(request.StatusTerminated)

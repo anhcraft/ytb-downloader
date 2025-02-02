@@ -6,11 +6,9 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
-	"strings"
 	"ytb-downloader/internal/constants"
 	"ytb-downloader/internal/handle/request"
 	"ytb-downloader/internal/resource"
-	"ytb-downloader/internal/settings"
 	"ytb-downloader/internal/ui/component"
 )
 
@@ -29,8 +27,8 @@ func content(req *request.Request, win fyne.Window) fyne.CanvasObject {
 	titleEntry := component.NewCopyableLabel(req.Title(), win)
 	urlEntry := component.NewCopyableLabel(req.RawUrl(), win)
 	formatEntry := component.NewCopyableLabel(req.Format(), win)
-	titleFetchCmdEntry := component.NewWrappedCopyableLabel(settings.Get().GetYTdlpPath()+" "+strings.Join(req.TitleFetchCmdArgs(), " "), win, 120)
-	downloadCmdEntry := component.NewWrappedCopyableLabel(settings.Get().GetYTdlpPath()+" "+strings.Join(req.DownloadCmdArgs(), " "), win, 200)
+	titleFetchCmdEntry := component.NewWrappedCopyableLabel(req.GetTitleFetchCommand(), win, 120)
+	downloadCmdEntry := component.NewWrappedCopyableLabel(req.GetDownloadCommand(), win, 200)
 	errorLogEntry := component.NewWrappedCopyableLabel(fmt.Sprint(req.DownloadError()), win, 120)
 
 	return container.New(
