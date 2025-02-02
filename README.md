@@ -10,7 +10,8 @@ A simple GUI for yt-dlp. [Download here](https://github.com/anhcraft/ytb-downloa
 
 ## Features
 - Support various websites (as long as yt-dlp supports)
-  - Tested sites: Youtube, Reddit, Tiktok, Twitter/X, Weibo
+  - Manually-tested sites: YouTube, Facebook, Reddit, TikTok, Twitter/X, Weibo, BiliBili, Soundcloud, Vimeo
+  - View the complete list: https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md
 - Fetch videos from playlist
 - Download the best format
 - Download video-only or audio-only
