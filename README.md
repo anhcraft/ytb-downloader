@@ -56,6 +56,7 @@ Example configuration for Linux environment:
 - If you use the Windows installer, the default installation path is `C:\Program Files (x86)\YTB Downloader`
 - `"ERROR: [WinError 32] The process cannot access the file because it is being used by another process:"`: might happen when you download the video into the folder currently opening in the IDE. To fix, pick a different download location.
 - Cannot run on Windows? Enable running as administrator (see: https://i.imgur.com/ALTWIM4.png)
+- Got `HTTP Error 403: Forbidden`? You might be playing YouTube from the browser while downloading from the GUI both at the same time
 
 ## Building
 - To build the program, first install Fyne: `go install fyne.io/fyne/v2/cmd/fyne@latest`
