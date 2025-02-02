@@ -4,6 +4,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
@@ -19,8 +20,7 @@ var win fyne.Window
 
 func OpenSettings(app fyne.App) fyne.Window {
 	win = app.NewWindow("Settings")
-	ctn := container.NewVBox(settingsContainer())
-	win.SetContent(ctn)
+	win.SetContent(settingsContainer())
 	win.Resize(fyne.NewSize(constants.SettingWindowWidth, constants.SettingWindowHeight))
 	win.SetFixedSize(true)
 	win.SetPadded(true)
@@ -140,10 +140,22 @@ func settingsContainer() fyne.CanvasObject {
 	})
 	locateSettingFile.SetIcon(theme.SearchIcon())
 
+	clearSettings := widget.NewButton("Reset settings", func() {
+		dialog.ShowConfirm("Reset Settings", "Are you sure you want to reset all settings?", func(b bool) {
+			if b {
+				settings.Reset()
+				settings.Save()
+				win.SetContent(settingsContainer()) // reload
+			}
+		}, win)
+	})
+	clearSettings.SetIcon(theme.DeleteIcon())
+
 	return container.NewVBox(
 		container.NewHBox(
 			layout.NewSpacer(),
 			locateSettingFile,
+			clearSettings,
 		),
 		container.New(
 			layout.NewFormLayout(),
