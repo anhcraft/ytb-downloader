@@ -69,7 +69,7 @@ func settingsContainer() fyne.CanvasObject {
 	_ = concurrentDownloads.Set(float64(settings.Get().ConcurrentDownloads))
 	concurrentDownloads.AddListener(binding.NewDataListener(func() {
 		if v, e := concurrentDownloads.Get(); e == nil {
-			settings.Get().ConcurrentDownloads = int(v)
+			settings.Get().ConcurrentDownloads = uint32(v)
 			settings.Save()
 		}
 	}))
@@ -87,7 +87,7 @@ func settingsContainer() fyne.CanvasObject {
 	_ = concurrentFragments.Set(float64(settings.Get().ConcurrentFragments))
 	concurrentFragments.AddListener(binding.NewDataListener(func() {
 		if v, e := concurrentFragments.Get(); e == nil {
-			settings.Get().ConcurrentFragments = int(v)
+			settings.Get().ConcurrentFragments = uint32(v)
 			settings.Save()
 		}
 	}))

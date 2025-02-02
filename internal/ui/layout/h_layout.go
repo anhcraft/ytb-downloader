@@ -5,12 +5,12 @@ import (
 	"fyne.io/fyne/v2/theme"
 )
 
-type VLayout struct {
+type HLayout struct {
 	size []float32
 }
 
-func NewVLayout(size int, ratio ...float32) *VLayout {
-	h := &VLayout{
+func NewHLayout(size int, ratio ...float32) *HLayout {
+	h := &HLayout{
 		size: make([]float32, size),
 	}
 	for i := 0; i < size; i++ {
@@ -22,17 +22,17 @@ func NewVLayout(size int, ratio ...float32) *VLayout {
 	return h
 }
 
-func (v *VLayout) SetSize(i int, size float32) {
+func (h *HLayout) SetSize(i int, size float32) {
 	if size < 0 {
-		v.size[i] = -1
+		h.size[i] = -1
 	} else if size > 1 {
-		v.size[i] = 1
+		h.size[i] = 1
 	} else {
-		v.size[i] = size
+		h.size[i] = size
 	}
 }
 
-func (v *VLayout) MinSize(objects []fyne.CanvasObject) fyne.Size {
+func (h *HLayout) MinSize(objects []fyne.CanvasObject) fyne.Size {
 	minSize := fyne.NewSize(0, 0)
 	for _, child := range objects {
 		if !child.Visible() {
@@ -43,18 +43,18 @@ func (v *VLayout) MinSize(objects []fyne.CanvasObject) fyne.Size {
 	return minSize
 }
 
-func (v *VLayout) Layout(objects []fyne.CanvasObject, containerSize fyne.Size) {
+func (h *HLayout) Layout(objects []fyne.CanvasObject, containerSize fyne.Size) {
 	pos := fyne.NewPos(0, 0)
 	for i, o := range objects {
 		o.Move(pos)
-		if v.size[i] < 0 {
+		if h.size[i] < 0 {
 			s := o.MinSize()
 			o.Resize(s)
-			pos = pos.AddXY(0, s.Height+theme.Padding())
+			pos = pos.AddXY(s.Width+theme.Padding(), 0)
 		} else {
-			h := containerSize.Height * v.size[i]
-			o.Resize(fyne.NewSize(containerSize.Width, h))
-			pos = pos.AddXY(0, h+theme.Padding())
+			w := containerSize.Width * h.size[i]
+			o.Resize(fyne.NewSize(w, containerSize.Height))
+			pos = pos.AddXY(w+theme.Padding(), 0)
 		}
 	}
 }

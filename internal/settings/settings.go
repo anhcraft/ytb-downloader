@@ -16,8 +16,8 @@ type Settings struct {
 	DownloadFolder      string `json:"downloadFolder,omitempty"`
 	YTdlpPath           string `json:"ytdlpPath,omitempty"`
 	FFmpegPath          string `json:"ffmpegPath,omitempty"`
-	ConcurrentDownloads int    `json:"concurrentDownloads,omitempty"`
-	ConcurrentFragments int    `json:"concurrentFragments,omitempty"`
+	ConcurrentDownloads uint32 `json:"concurrentDownloads,omitempty"`
+	ConcurrentFragments uint32 `json:"concurrentFragments,omitempty"`
 	LogPath             string `json:"logPath,omitempty"`
 	ExtraYtdlpOptions   string `json:"extraYtdlpOptions,omitempty"`
 	globalLogger        *zerolog.Logger
