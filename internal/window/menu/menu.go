@@ -197,8 +197,8 @@ func requestTable() fyne.CanvasObject {
 		}
 	}
 
-	table.SetColumnWidth(0, constants.MainWindowWidth*0.6)
-	table.SetColumnWidth(1, constants.MainWindowWidth*0.38)
+	table.SetColumnWidth(0, constants.MainWindowWidth*0.5)
+	table.SetColumnWidth(1, constants.MainWindowWidth*0.48)
 
 	return table
 }
