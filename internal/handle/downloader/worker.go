@@ -11,12 +11,12 @@ import (
 	"ytb-downloader/internal/settings"
 )
 
-func download(req *request.Request) {
+func download(req *request.Request, callback func()) {
 	var err error
 
 	defer func() {
 		if err != nil {
-			logger.Downloader.Println(err)
+			logger.Downloader.Println("error running command:", err)
 			req.SetDownloadError(err)
 
 			// SetStatus already check status transition
@@ -24,6 +24,8 @@ func download(req *request.Request) {
 			req.SetStatus(request.StatusFailed)
 			request.GetQueue().OnUpdate(req)
 		}
+
+		callback()
 	}()
 
 	logger.Downloader.Printf("downloading %s", req.RawUrl())
@@ -85,9 +87,11 @@ func download(req *request.Request) {
 
 	// if error occurred (on behalf of yt-dlp), the process returns non-zero exit code
 	// so we prioritize the error already caught from the output
-	if err1 = cmd.Wait(); err1 != nil && err == nil {
-		err = err1
-		return
+	if err == nil {
+		if err1 = cmd.Wait(); err1 != nil {
+			err = err1
+			return
+		}
 	}
 
 	if err == nil {

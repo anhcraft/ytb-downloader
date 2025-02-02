@@ -37,6 +37,9 @@ func runDownloadScheduler() {
 		// Set status here instead of delegating to the worker
 		req.SetStatus(request.StatusDownloading)
 		request.GetQueue().OnUpdate(req)
-		go download(req)
+		workerCount.Add(1)
+		go download(req, func() {
+			workerCount.Add(^uint32(0))
+		})
 	}
 }
