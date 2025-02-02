@@ -4,7 +4,6 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
-	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 	"ytb-downloader/internal/constants"
@@ -116,7 +115,7 @@ func settingsContainer() fyne.CanvasObject {
 		logPathInput,
 		layout.NewSpacer(),
 		widget.NewButton("...", func() {
-			dialog.ShowFileOpen(func(uri fyne.URIReadCloser, err error) {
+			component.OpenFileSelector(settings.Get().LogPath, func(uri fyne.URIReadCloser, err error) {
 				if uri != nil {
 					settings.Get().LogPath = uri.URI().Path()
 					settings.Save()
