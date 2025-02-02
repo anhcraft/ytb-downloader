@@ -16,6 +16,7 @@ import (
 	"ytb-downloader/internal/settings"
 	"ytb-downloader/internal/ui/component"
 	layout2 "ytb-downloader/internal/ui/layout"
+	"ytb-downloader/internal/window/debug"
 	settingsWindow "ytb-downloader/internal/window/settings"
 )
 
@@ -222,15 +223,15 @@ func NewTableEntry() *TableEntry {
 		fyne.NewMenuItem("Copy Title", func() {
 			win.Clipboard().SetContent(entry.req.Title())
 		}),
-		fyne.NewMenuItem("Copy Title-Fetch command", func() {
-			win.Clipboard().SetContent(settings.Get().GetYTdlpPath() + " " + strings.Join(entry.req.TitleFetchCmdArgs(), " "))
-		}),
 		fyne.NewMenuItem("Copy Download command", func() {
 			win.Clipboard().SetContent(settings.Get().GetYTdlpPath() + " " + strings.Join(entry.req.DownloadCmdArgs(), " "))
 		}),
 		fyne.NewMenuItem("Terminate", func() {
 			entry.req.SetStatus(request.StatusTerminated)
 			table.Refresh()
+		}),
+		fyne.NewMenuItem("Debug", func() {
+			debug.OpenRequestDebugViewer(fyne.CurrentApp(), entry.req)
 		}),
 		fyne.NewMenuItem("Remove", func() {
 			if entry.req.Status() == request.StatusDownloading {
