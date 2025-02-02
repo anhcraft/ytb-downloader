@@ -6,7 +6,7 @@
 
 A simple GUI for yt-dlp. [Download here](https://github.com/anhcraft/ytb-downloader/releases)
 
-![https://i.imgur.com/SANphrc.png](https://i.imgur.com/SANphrc.png)
+![https://i.imgur.com/zpvzS7y.png](https://i.imgur.com/zpvzS7y.png)
 
 ## Features
 - Support various websites (as long as yt-dlp supports)

@@ -17,6 +17,7 @@ import (
 	"ytb-downloader/internal/settings"
 	"ytb-downloader/internal/ui/component"
 	layout2 "ytb-downloader/internal/ui/layout"
+	"ytb-downloader/internal/window"
 	"ytb-downloader/internal/window/debug"
 	settingsWindow "ytb-downloader/internal/window/settings"
 )
@@ -81,6 +82,13 @@ func toolbar(app fyne.App) fyne.CanvasObject {
 		}),
 		widget.NewToolbarAction(theme.SettingsIcon(), func() {
 			settingsWindow.OpenSettings(app)
+		}),
+		widget.NewToolbarAction(theme.InfoIcon(), func() {
+			err := window.OpenURL("https://github.com/anhcraft/ytb-downloader")
+			if err != nil {
+				dialog.ShowError(err, win)
+				return
+			}
 		}),
 	)
 	return toolbar
