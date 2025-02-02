@@ -23,8 +23,8 @@ func ParseRequest(input string) []*Request {
 		RewriteYoutubeShortLink(u)
 
 		// flatten YouTube playlist
-		if u.Host == "youtube.com" && u.Path == "/playlist" {
-			flattenYoutubePlaylist(res, v)
+		if strings.HasSuffix(u.Host, "youtube.com") && u.Path == "/playlist" {
+			flattenYoutubePlaylist(&res, v)
 			continue
 		}
 
@@ -35,7 +35,7 @@ func ParseRequest(input string) []*Request {
 	return res
 }
 
-func flattenYoutubePlaylist(queue []*Request, link string) {
+func flattenYoutubePlaylist(queue *[]*Request, link string) {
 	logger.Queue.Println("new playlist link", link)
 
 	// ./yt-dlp.exe --flat-playlist --ignore-errors --no-warnings --print-to-file "title,url" "temp.txt" ""
@@ -84,22 +84,22 @@ func flattenYoutubePlaylist(queue []*Request, link string) {
 		return
 	}
 
-	lines := strings.Split(string(bytes), "\n")
+	lines := strings.Split(strings.ReplaceAll(string(bytes), "\r", ""), "\n")
 	logger.Queue.Printf("found %d videos in the playlist", len(lines)>>1)
 
 	for i := 0; i+1 < len(lines); i += 2 {
-		logger.Queue.Println(lines[i+1])
+		logger.Queue.Println(lines[i+1] + ": " + lines[i])
 
 		// TODO better way to check private videos
 		if strings.Contains(lines[i+1], "[Private video]") {
 			continue
 		}
 
-		if u, err := url.ParseRequestURI(lines[i+1]); err == nil {
+		if u, err := url.ParseRequestURI(lines[i]); err == nil {
 			req := NewRequest(u)
-			req.SetTitle(lines[i])
+			req.SetTitle(lines[i+1])
 			req.SetTitleFetched(true)
-			queue = append(queue, req)
+			*queue = append(*queue, req)
 		}
 	}
 }
