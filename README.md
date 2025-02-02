@@ -6,13 +6,14 @@
 
 A simple GUI for yt-dlp. [Download here](https://github.com/anhcraft/ytb-downloader/releases)
 
-![https://i.imgur.com/vJOuWBb.png](https://i.imgur.com/vJOuWBb.png)
+![https://i.imgur.com/SANphrc.png](https://i.imgur.com/SANphrc.png)
 
 ## Features
 - Support various websites (as long as yt-dlp supports)
   - Manually-tested sites: YouTube, Facebook, Reddit, TikTok, Twitter/X, Weibo, BiliBili, Soundcloud, Vimeo
   - View the complete list: https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md
 - Fetch videos from playlist
+  - **Note**: YouTube playlist is automatically flattened, then you can remove or keep each video from the table
 - Download the best format
 - Download video-only or audio-only
 - Embed thumbnail
