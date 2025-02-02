@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
@@ -31,6 +32,16 @@ var input *widget.Entry
 var logger zerolog.Logger
 
 func OpenMenu(app fyne.App) fyne.Window {
+	CheckUpdate(func(latest bool, currVer string, latestVer string, err error) {
+		if !latest {
+			dialog.ShowInformation(
+				"Update",
+				fmt.Sprintf("Latest version: %s\nCurrent version: %s\nPlease update the app!", latestVer, currVer),
+				win,
+			)
+		}
+	})
+
 	request.GetQueue().SetUpdateCallback(func(req *request.Request) {
 		// TODO thread-safe?
 		if req.Status() == request.StatusFailed {
