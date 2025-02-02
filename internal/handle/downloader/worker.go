@@ -56,6 +56,10 @@ func download(req *request.Request, callback func()) {
 	for {
 		if req.Status() == request.StatusTerminated {
 			err = errors.New("download terminated by user")
+			if err1 := cmd.Process.Kill(); err != nil {
+				logger.Downloader.Println("error killing process:", err1)
+				err = err1
+			}
 			break
 		}
 
