@@ -1,7 +1,6 @@
 package request
 
 import (
-	"fmt"
 	"sync"
 )
 
@@ -42,6 +41,5 @@ func (rq *Queue) SetUpdateCallback(updateCallback func(req *Request)) {
 }
 
 func (rq *Queue) OnUpdate(req *Request) {
-	fmt.Println(rq.updateCallback == nil)
 	rq.updateCallback(req)
 }
