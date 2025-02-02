@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"ytb-downloader/internal/handle/request"
 )
 
 func OpenExplorer(path string) {
@@ -22,6 +23,7 @@ func OpenExplorer(path string) {
 		}
 
 		cmd := exec.Command("explorer", "/select,", absPath)
+		request.DecorateCmd(cmd)
 		_ = cmd.Run()
 	}
 }
@@ -40,6 +42,11 @@ func OpenURL(url string) error {
 	default: // "linux", "freebsd", "openbsd", "netbsd"
 		cmd = "xdg-open"
 	}
+
 	args = append(args, url)
-	return exec.Command(cmd, args...).Start()
+
+	command := exec.Command(cmd, args...)
+	request.DecorateCmd(command)
+
+	return command.Start()
 }
