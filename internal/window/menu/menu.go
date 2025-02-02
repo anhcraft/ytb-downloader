@@ -100,7 +100,7 @@ func requestSettings() fyne.CanvasObject {
 	fmtSelector.SetSelected(settings.Get().Format)
 
 	downloadToLabel := widget.NewLabel("Download To")
-	downloadTo := widget.NewLabel(truncateString(settings.Get().DownloadFolder, 30))
+	downloadTo := component.NewCopyableLabel(settings.Get().DownloadFolder, win)
 	downloadFolder := container.NewHBox(
 		downloadTo,
 		layout.NewSpacer(),

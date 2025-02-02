@@ -12,11 +12,15 @@ type CopyableLabel struct {
 	win fyne.Window
 }
 
+func (c *CopyableLabel) MinSize() fyne.Size {
+	c.ExtendBaseWidget(c)
+	return c.BaseWidget.MinSize()
+}
+
 func NewCopyableLabel(text string, win fyne.Window) *CopyableLabel {
 	label := &CopyableLabel{}
 	label.win = win
 	label.Text = text
-	label.Truncation = fyne.TextTruncateEllipsis
 	label.ExtendBaseWidget(label)
 	return label
 }
@@ -30,12 +34,12 @@ func NewWrappedCopyableLabel(text string, win fyne.Window, height float32) *cont
 	return scroll
 }
 
-func (l *CopyableLabel) TappedSecondary(e *fyne.PointEvent) {
+func (c *CopyableLabel) TappedSecondary(e *fyne.PointEvent) {
 	menu := fyne.NewMenu("",
 		fyne.NewMenuItem("Copy", func() {
-			l.win.Clipboard().SetContent(l.Text)
+			c.win.Clipboard().SetContent(c.Text)
 		}),
 	)
 
-	widget.ShowPopUpMenuAtPosition(menu, fyne.CurrentApp().Driver().CanvasForObject(l), e.AbsolutePosition)
+	widget.ShowPopUpMenuAtPosition(menu, fyne.CurrentApp().Driver().CanvasForObject(c), e.AbsolutePosition)
 }

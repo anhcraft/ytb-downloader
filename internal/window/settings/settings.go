@@ -33,7 +33,7 @@ func OpenSettings(app fyne.App) fyne.Window {
 
 func settingsContainer() fyne.CanvasObject {
 	ytdlpLabel := widget.NewLabel("Yt-dlp Path")
-	ytdlpPath := widget.NewLabel(settings.Get().YTdlpPath)
+	ytdlpPath := component.NewCopyableLabel(settings.Get().YTdlpPath, win)
 	ytdlpSelector := container.NewHBox(
 		ytdlpPath,
 		layout.NewSpacer(),
@@ -49,7 +49,7 @@ func settingsContainer() fyne.CanvasObject {
 	)
 
 	ffmpegLabel := widget.NewLabel("FFmpeg Path")
-	ffmpegPath := widget.NewLabel(settings.Get().FFmpegPath)
+	ffmpegPath := component.NewCopyableLabel(settings.Get().FFmpegPath, win)
 	ffmpegSelector := container.NewHBox(
 		ffmpegPath,
 		layout.NewSpacer(),
@@ -110,7 +110,7 @@ func settingsContainer() fyne.CanvasObject {
 	thumbnailSelector.SetSelected(settings.Get().EmbedThumbnail)
 
 	logPathLabel := widget.NewLabel("Path to log file")
-	logPathInput := widget.NewLabel(settings.Get().LogPath)
+	logPathInput := component.NewCopyableLabel(settings.Get().LogPath, win)
 	logPathSelector := container.NewHBox(
 		logPathInput,
 		layout.NewSpacer(),
