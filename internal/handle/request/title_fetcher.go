@@ -3,6 +3,7 @@ package request
 import (
 	"os"
 	"os/exec"
+	"strings"
 	"ytb-downloader/internal/handle/logger"
 	"ytb-downloader/internal/settings"
 )
@@ -63,7 +64,9 @@ func fetchTitle(req *Request) bool {
 		return false
 	}
 
-	req.SetTitle(string(bytes))
+	title := strings.ReplaceAll(string(bytes), "\r", "")
+	title = strings.ReplaceAll(title, "\n", "")
+	req.SetTitle(title)
 	req.SetTitleFetched(true)
 	return true
 }
