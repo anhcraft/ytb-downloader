@@ -5,12 +5,14 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 	"ytb-downloader/internal/constants"
 	"ytb-downloader/internal/resource"
 	"ytb-downloader/internal/settings"
 	"ytb-downloader/internal/thumbnail"
 	"ytb-downloader/internal/ui/component"
+	"ytb-downloader/internal/window"
 )
 
 var win fyne.Window
@@ -133,14 +135,25 @@ func settingsContainer() fyne.CanvasObject {
 	}))
 	extraYtpOptInput := widget.NewEntryWithData(extraYtpOptInputBinding)
 
-	return container.New(
-		layout.NewFormLayout(),
-		ytdlpLabel, ytdlpSelector,
-		ffmpegLabel, ffmpegSelector,
-		concurrentDownloadsLabel, concurrentDownloadsSelector,
-		concurrentFragmentsLabel, concurrentFragmentsSelector,
-		thumbnailLabel, thumbnailSelector,
-		logPathLabel, logPathSelector,
-		extraYtpOptLabel, extraYtpOptInput,
+	locateSettingFile := widget.NewButton("Locate settings file", func() {
+		window.OpenExplorer(settings.SETTINGS_FILE)
+	})
+	locateSettingFile.SetIcon(theme.SearchIcon())
+
+	return container.NewVBox(
+		container.NewHBox(
+			layout.NewSpacer(),
+			locateSettingFile,
+		),
+		container.New(
+			layout.NewFormLayout(),
+			ytdlpLabel, ytdlpSelector,
+			ffmpegLabel, ffmpegSelector,
+			concurrentDownloadsLabel, concurrentDownloadsSelector,
+			concurrentFragmentsLabel, concurrentFragmentsSelector,
+			thumbnailLabel, thumbnailSelector,
+			logPathLabel, logPathSelector,
+			extraYtpOptLabel, extraYtpOptInput,
+		),
 	)
 }
