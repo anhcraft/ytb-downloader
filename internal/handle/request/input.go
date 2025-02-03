@@ -6,14 +6,36 @@ import (
 	"os/exec"
 	"strings"
 	"ytb-downloader/internal/handle/logger"
+	"ytb-downloader/internal/scripting"
 	"ytb-downloader/internal/settings"
 )
 
 func ParseRequest(input string) []*Request {
+	scriptCode := settings.Get().LoadScriptFile()
 	res := make([]*Request, 0)
 
 	for _, v := range strings.Split(input, "\n") {
 		v = strings.TrimSpace(v)
+
+		if scriptCode != nil {
+			logger.Queue.Println("running script at input:", v)
+			result, err := scripting.HandleDownload(scriptCode, v)
+
+			if err != nil {
+				logger.Queue.Println("error running script:", err)
+				continue
+			}
+
+			switch result.Action {
+			case "skip":
+				continue
+			case "override":
+				v = result.Value
+			default:
+				// do nothing
+			}
+		}
+
 		u, err := url.ParseRequestURI(v)
 
 		if err != nil {

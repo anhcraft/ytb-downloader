@@ -187,6 +187,25 @@ func settingsContainer() fyne.CanvasObject {
 	})
 	clearSettings.SetIcon(theme.DeleteIcon())
 
+	scriptFileLabel := widget.NewLabel("Script File")
+	scriptFileInput := component.NewAutoSaveInput(settings.Get().GetScriptFile, func(val string) {
+		settings.Get().SetScriptFile(val)
+		settings.Save()
+	}, requirePathIsFileOrAbsent)
+	scriptFileSelector := container.NewBorder(
+		nil,
+		nil,
+		nil,
+		widget.NewButton("...", func() {
+			component.OpenFileSelector(settings.Get().GetScriptFile(), func(uri fyne.URIReadCloser, err error) {
+				if uri != nil {
+					scriptFileInput.SetText(uri.URI().Path())
+				}
+			}, win)
+		}),
+		scriptFileInput,
+	)
+
 	return container.NewVBox(
 		container.NewHBox(
 			layout.NewSpacer(),
@@ -203,6 +222,7 @@ func settingsContainer() fyne.CanvasObject {
 			thumbnailLabel, thumbnailSelector,
 			logPathLabel, logPathSelector,
 			extraYtpOptLabel, extraYtpOptInput,
+			scriptFileLabel, scriptFileSelector,
 		),
 	)
 }

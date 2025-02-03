@@ -18,6 +18,7 @@ type Settings struct {
 	ConcurrentFragments uint32 `json:"concurrentFragments,omitempty"`
 	LogPath             string `json:"logPath,omitempty"`
 	ExtraYtdlpOptions   string `json:"extraYtdlpOptions,omitempty"`
+	ScriptFile          string `json:"scriptingFile,omitempty"`
 }
 
 func NewSettings() *Settings {
@@ -156,4 +157,31 @@ func (s *Settings) ExtraYtdlpOptionsAsArray() []string {
 
 func (s *Settings) SetExtraYtdlpOptions(extraYtdlpOptions string) {
 	s.ExtraYtdlpOptions = extraYtdlpOptions
+}
+
+func (s *Settings) GetScriptFile() string {
+	if s.ScriptFile == "" {
+		return "./script.tengo"
+	}
+	_, err := os.Stat(s.ScriptFile)
+	if err != nil {
+		return "./script.tengo"
+	}
+	return s.ScriptFile
+}
+
+func (s *Settings) LoadScriptFile() []byte {
+	_, err := os.Stat(s.ScriptFile)
+	if err != nil {
+		return nil
+	}
+	bytes, err := os.ReadFile(s.ScriptFile)
+	if err != nil {
+		return nil
+	}
+	return bytes
+}
+
+func (s *Settings) SetScriptFile(scriptFile string) {
+	s.ScriptFile = scriptFile
 }

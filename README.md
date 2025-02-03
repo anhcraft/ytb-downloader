@@ -21,6 +21,7 @@ A simple GUI for yt-dlp. [Download here](https://github.com/anhcraft/ytb-downloa
 - Continue downloading after interrupt
 - Logging to file and console
 - CJK font support
+- Scripting support using [Tengo](https://tengolang.com/) (see below)
 
 ## Requirement
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp)
@@ -53,6 +54,21 @@ Example configuration for Linux environment:
   "logPath": "./log.txt"
 }
 ```
+
+## Scripting
+- You can write [Tengo](https://tengolang.com/) script to control fetching request
+- The script is loaded every time a batch of input is _fetched_. However, if it does not exist, the default handle is used
+- The script is executed once for each request
+- Input: `_input` denotes a line of input (space-stripped guaranteed)
+- Output: `_action` and `_value`
+  - `_action = skip`: skip this request
+  - `_action = override`: override the input with `_value`, and continue with the default handle. Remember that the new input must be compatible to ytdlp
+  - other values: continue with the default handle
+- All Tengo stdlib modules are enabled (including file and OS access)
+- Additional modules (made by YTB-Downloader)
+  - `url`: URL utilities ([View docs](https://github.com/anhcraft/ytb-downloader/blob/main/internal/scripting/module/url.go))
+- **Warning**: Be careful when using the script, you must acknowledge what it does under the hood. Do not use script taken from untrusted sources.
+- See [script.tengo](script.tengo) for an example
 
 ## Notes
 - If you use the Windows installer, the default installation path is `C:\Program Files (x86)\YTB Downloader`

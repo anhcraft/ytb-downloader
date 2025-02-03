@@ -1,0 +1,29 @@
+/*
+This is a minimal example of how to write a Tengo script to control fetching request
+- Documentation: https://tengolang.com/
+
+In this script, URL "https://www.youtubetrimmer.com/view/?v=X" will be rewritten to "https://youtu.be/X"
+while leave the rest URLs unchanged
+*/
+
+url := import("url")
+
+_action := "default"
+_value := _input
+
+process := func(input) {
+    domain := url.extractDomain(input)
+    query := url.extractQuery(input)
+
+    if domain == "www.youtubetrimmer.com" {
+        if query["v"] != undefined && len(query["v"]) > 0 {
+            videoID := query["v"][0]
+            newURL := "https://youtu.be/" + videoID
+            _action = "override"
+            _value = newURL
+            return
+        }
+    }
+}
+
+process(_input)

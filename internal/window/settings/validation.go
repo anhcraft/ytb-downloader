@@ -38,3 +38,20 @@ func requirePathIsFile(s string) error {
 
 	return nil
 }
+
+func requirePathIsFileOrAbsent(s string) error {
+	if s == "" {
+		return nil
+	}
+
+	info, err := os.Stat(s)
+	if err != nil {
+		return nil
+	}
+
+	if info.IsDir() {
+		return fmt.Errorf("path is a directory, not a file: %s", s)
+	}
+
+	return nil
+}
