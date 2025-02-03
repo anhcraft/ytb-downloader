@@ -33,7 +33,7 @@ func Load() {
 }
 
 func Save() {
-	data, err := json.Marshal(settings)
+	data, err := json.MarshalIndent(settings, "", "    ")
 	if err != nil {
 		log.Printf("error marshalling settings file: %v\n", err)
 		return
