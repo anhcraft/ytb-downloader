@@ -23,7 +23,7 @@ func requestSettings() fyne.CanvasObject {
 	fmtSelector.SetSelected(settings.Get().GetFormat())
 
 	downloadToLabel := widget.NewLabel("Download To")
-	downloadTo := component.NewCopyableLabel(settings.Get().GetDownloadFolder(), win)
+	downloadTo := component.NewCopyableLabel(truncateString(settings.Get().GetDownloadFolder(), 45), win)
 	downloadFolder := container.NewHBox(
 		downloadTo,
 		layout.NewSpacer(),
@@ -73,8 +73,8 @@ func requestSettings() fyne.CanvasObject {
 }
 
 func truncateString(s string, max int) string {
-	if len(s) > max {
-		return s[:max]
+	if len(s) > max-3 {
+		return s[:max] + "..."
 	}
 	return s
 }
