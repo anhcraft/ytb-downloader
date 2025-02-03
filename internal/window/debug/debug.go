@@ -12,7 +12,15 @@ import (
 	"ytb-downloader/internal/ui/component"
 )
 
+// Go GC is non-moving so it is safe to use pointer as map key
+var active = make(map[*request.Request]fyne.Window)
+
 func OpenRequestDebugViewer(app fyne.App, req *request.Request) fyne.Window {
+	if win, ok := active[req]; ok {
+		win.RequestFocus()
+		return win
+	}
+
 	win := app.NewWindow("Debug")
 	win.SetContent(container.NewVBox(content(req, win)))
 	win.SetFixedSize(true)
@@ -20,6 +28,10 @@ func OpenRequestDebugViewer(app fyne.App, req *request.Request) fyne.Window {
 	win.SetIcon(resource.ProgramIcon)
 	win.Resize(fyne.NewSize(constants.RequestDebugWindowWidth, constants.RequestDebugWindowHeight))
 	win.Show()
+	win.SetOnClosed(func() {
+		delete(active, req)
+	})
+	active[req] = win
 	return win
 }
 
