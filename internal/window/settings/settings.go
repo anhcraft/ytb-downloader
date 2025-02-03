@@ -19,6 +19,11 @@ import (
 var win fyne.Window
 
 func OpenSettings(app fyne.App) fyne.Window {
+	if win != nil {
+		win.RequestFocus()
+		return win
+	}
+
 	win = app.NewWindow("Settings")
 	win.SetContent(settingsContainer())
 	win.Resize(fyne.NewSize(constants.SettingWindowWidth, constants.SettingWindowHeight))
@@ -29,7 +34,9 @@ func OpenSettings(app fyne.App) fyne.Window {
 	win.Show()
 	win.SetOnClosed(func() {
 		settings.Save()
+		win = nil
 	})
+
 	return win
 }
 
