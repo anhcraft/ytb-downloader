@@ -1,8 +1,6 @@
 package settings
 
 import (
-	"fmt"
-	"github.com/rs/zerolog"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,32 +12,31 @@ type Settings struct {
 	Format              string `json:"format,omitempty"`
 	EmbedThumbnail      string `json:"embedThumbnail,omitempty"`
 	DownloadFolder      string `json:"downloadFolder,omitempty"`
-	YTdlpPath           string `json:"ytdlpPath,omitempty"`
-	FFmpegPath          string `json:"ffmpegPath,omitempty"`
+	YtdlpPath           string `json:"ytdlpPath,omitempty"`
+	FfmpegPath          string `json:"ffmpegPath,omitempty"`
 	ConcurrentDownloads uint32 `json:"concurrentDownloads,omitempty"`
 	ConcurrentFragments uint32 `json:"concurrentFragments,omitempty"`
 	LogPath             string `json:"logPath,omitempty"`
 	ExtraYtdlpOptions   string `json:"extraYtdlpOptions,omitempty"`
-	globalLogger        *zerolog.Logger
 }
 
-func (s *Settings) GetLogger() *zerolog.Logger {
-	if s.globalLogger == nil {
-		file, err := os.OpenFile(s.GetLogPath(), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0666)
-		if err != nil {
-			panic(fmt.Sprintf("Error creating log file: %v\n", err))
-		}
-		consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout}
-		multi := zerolog.MultiLevelWriter(consoleWriter, file)
-		logger := zerolog.New(multi).With().Timestamp().Logger()
-		s.globalLogger = &logger
+func NewSettings() *Settings {
+	return &Settings{
+		Format:              format.Default,
+		EmbedThumbnail:      thumbnail.AudioOnly,
+		DownloadFolder:      "",
+		YtdlpPath:           "",
+		FfmpegPath:          "",
+		ConcurrentDownloads: 1,
+		ConcurrentFragments: 3,
+		LogPath:             "",
+		ExtraYtdlpOptions:   "",
 	}
-	return s.globalLogger
 }
 
 func (s *Settings) Normalize() {
-	s.YTdlpPath = strings.TrimSpace(s.YTdlpPath)
-	s.FFmpegPath = strings.TrimSpace(s.FFmpegPath)
+	s.YtdlpPath = strings.TrimSpace(s.YtdlpPath)
+	s.FfmpegPath = strings.TrimSpace(s.FfmpegPath)
 	s.LogPath = strings.TrimSpace(s.LogPath)
 	s.DownloadFolder = strings.TrimSpace(s.DownloadFolder)
 	if !format.IsValid(s.Format) {
@@ -56,6 +53,22 @@ func (s *Settings) Normalize() {
 	}
 }
 
+func (s *Settings) GetFormat() string {
+	return s.Format
+}
+
+func (s *Settings) SetFormat(format string) {
+	s.Format = format
+}
+
+func (s *Settings) GetEmbedThumbnail() string {
+	return s.EmbedThumbnail
+}
+
+func (s *Settings) SetEmbedThumbnail(embedThumbnail string) {
+	s.EmbedThumbnail = embedThumbnail
+}
+
 func (s *Settings) GetDownloadFolder() string {
 	fi, err := os.Stat(s.DownloadFolder)
 	if err != nil || !fi.IsDir() {
@@ -68,26 +81,54 @@ func (s *Settings) GetDownloadFolder() string {
 	return s.DownloadFolder
 }
 
-func (s *Settings) GetYTdlpPath() string {
-	if s.YTdlpPath == "" {
-		return "./yt-dlp.exe"
-	}
-	_, err := os.Stat(s.YTdlpPath)
-	if err != nil {
-		return "./yt-dlp.exe"
-	}
-	return s.YTdlpPath
+func (s *Settings) SetDownloadFolder(downloadFolder string) {
+	s.DownloadFolder = downloadFolder
 }
 
-func (s *Settings) GetFFmpegPath() string {
-	if s.FFmpegPath == "" {
+func (s *Settings) GetYtdlpPath() string {
+	if s.YtdlpPath == "" {
+		return "./yt-dlp.exe"
+	}
+	_, err := os.Stat(s.YtdlpPath)
+	if err != nil {
+		return "./yt-dlp.exe"
+	}
+	return s.YtdlpPath
+}
+
+func (s *Settings) SetYtdlpPath(ytdlpPath string) {
+	s.YtdlpPath = ytdlpPath
+}
+
+func (s *Settings) GetFfmpegPath() string {
+	if s.FfmpegPath == "" {
 		return "./ffmpeg.exe"
 	}
-	_, err := os.Stat(s.FFmpegPath)
+	_, err := os.Stat(s.FfmpegPath)
 	if err != nil {
 		return "./ffmpeg.exe"
 	}
-	return s.FFmpegPath
+	return s.FfmpegPath
+}
+
+func (s *Settings) SetFfmpegPath(ffmpegPath string) {
+	s.FfmpegPath = ffmpegPath
+}
+
+func (s *Settings) GetConcurrentDownloads() uint32 {
+	return s.ConcurrentDownloads
+}
+
+func (s *Settings) SetConcurrentDownloads(concurrentDownloads uint32) {
+	s.ConcurrentDownloads = concurrentDownloads
+}
+
+func (s *Settings) GetConcurrentFragments() uint32 {
+	return s.ConcurrentFragments
+}
+
+func (s *Settings) SetConcurrentFragments(concurrentFragments uint32) {
+	s.ConcurrentFragments = concurrentFragments
 }
 
 func (s *Settings) GetLogPath() string {
@@ -101,20 +142,18 @@ func (s *Settings) GetLogPath() string {
 	return s.LogPath
 }
 
-func (s *Settings) GetExtraYtdlpOptions() []string {
+func (s *Settings) SetLogPath(logPath string) {
+	s.LogPath = logPath
+}
+
+func (s *Settings) GetExtraYtdlpOptions() string {
+	return s.ExtraYtdlpOptions
+}
+
+func (s *Settings) ExtraYtdlpOptionsAsArray() []string {
 	return strings.Fields(s.ExtraYtdlpOptions)
 }
 
-func NewSettings() *Settings {
-	return &Settings{
-		Format:              format.Default,
-		EmbedThumbnail:      thumbnail.AudioOnly,
-		DownloadFolder:      "",
-		YTdlpPath:           "",
-		FFmpegPath:          "",
-		ConcurrentDownloads: 1,
-		ConcurrentFragments: 3,
-		LogPath:             "",
-		ExtraYtdlpOptions:   "",
-	}
+func (s *Settings) SetExtraYtdlpOptions(extraYtdlpOptions string) {
+	s.ExtraYtdlpOptions = extraYtdlpOptions
 }

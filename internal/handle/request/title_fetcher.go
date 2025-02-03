@@ -40,7 +40,7 @@ func fetchTitle(req *Request) bool {
 	}(temp)
 
 	tempPath := temp.Name()
-	req.SetTitleFetchCmdArgs(append(settings.Get().GetExtraYtdlpOptions(),
+	req.SetTitleFetchCmdArgs(append(settings.Get().ExtraYtdlpOptionsAsArray(),
 		"--skip-download",
 		"--ignore-errors",
 		"--no-warnings",
@@ -49,7 +49,7 @@ func fetchTitle(req *Request) bool {
 		tempPath,
 		req.url.String(),
 	))
-	cmd := exec.Command(settings.Get().GetYTdlpPath(), req.TitleFetchCmdArgs()...)
+	cmd := exec.Command(settings.Get().GetYtdlpPath(), req.TitleFetchCmdArgs()...)
 	DecorateCmd(cmd)
 	logger.Queue.Println("executing command", cmd.String())
 

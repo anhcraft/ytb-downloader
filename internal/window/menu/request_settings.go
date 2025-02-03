@@ -17,20 +17,20 @@ func requestSettings() fyne.CanvasObject {
 	fmtSelector := widget.NewSelect(
 		[]string{format.Default, format.VideoOnly, format.AudioOnly},
 		func(value string) {
-			settings.Get().Format = value
+			settings.Get().SetFormat(value)
 			settings.Save()
 		})
-	fmtSelector.SetSelected(settings.Get().Format)
+	fmtSelector.SetSelected(settings.Get().GetFormat())
 
 	downloadToLabel := widget.NewLabel("Download To")
-	downloadTo := component.NewCopyableLabel(settings.Get().DownloadFolder, win)
+	downloadTo := component.NewCopyableLabel(settings.Get().GetDownloadFolder(), win)
 	downloadFolder := container.NewHBox(
 		downloadTo,
 		layout.NewSpacer(),
 		widget.NewButton("...", func() {
-			component.OpenFolderSelector(settings.Get().DownloadFolder, func(uri fyne.ListableURI, err error) {
+			component.OpenFolderSelector(settings.Get().GetDownloadFolder(), func(uri fyne.ListableURI, err error) {
 				if uri != nil {
-					settings.Get().DownloadFolder = uri.Path()
+					settings.Get().SetDownloadFolder(uri.Path())
 					settings.Save()
 					downloadTo.SetText(truncateString(uri.Path(), 30))
 				}

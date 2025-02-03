@@ -9,19 +9,19 @@ import (
 )
 
 func SupplyQueue(req []*Request) {
-	commonArgs := append(settings.Get().GetExtraYtdlpOptions(), "--ignore-errors", "--no-warnings",
+	commonArgs := append(settings.Get().ExtraYtdlpOptionsAsArray(), "--ignore-errors", "--no-warnings",
 		"--progress", "--newline",
 		"--progress-template", "[[PROGRESS]] %(progress._percent_str)s,%(progress._downloaded_bytes_str)s,%(progress._total_bytes_str)s,%(progress._speed_str)s,%(progress._eta_str)s",
-		"--concurrent-fragments", strconv.FormatUint(uint64(settings.Get().ConcurrentFragments), 10),
+		"--concurrent-fragments", strconv.FormatUint(uint64(settings.Get().GetConcurrentFragments()), 10),
 		"--abort-on-unavailable-fragments",
 		"-P", settings.Get().GetDownloadFolder())
 
-	if fp := settings.Get().GetFFmpegPath(); len(fp) > 0 {
+	if fp := settings.Get().GetFfmpegPath(); len(fp) > 0 {
 		commonArgs = append(commonArgs, "--ffmpeg-location", fp)
 	}
 
-	fmt := settings.Get().Format
-	embedThumbnail := settings.Get().EmbedThumbnail
+	fmt := settings.Get().GetFormat()
+	embedThumbnail := settings.Get().GetEmbedThumbnail()
 	shouldEmbedThumbnail := embedThumbnail != thumbnail.Never &&
 		(embedThumbnail == thumbnail.Always || fmt == embedThumbnail)
 

@@ -42,14 +42,14 @@ func OpenSettings(app fyne.App) fyne.Window {
 
 func settingsContainer() fyne.CanvasObject {
 	ytdlpLabel := widget.NewLabel("Yt-dlp Path")
-	ytdlpPath := component.NewCopyableLabel(settings.Get().YTdlpPath, win)
+	ytdlpPath := component.NewCopyableLabel(settings.Get().GetYtdlpPath(), win)
 	ytdlpSelector := container.NewHBox(
 		ytdlpPath,
 		layout.NewSpacer(),
 		widget.NewButton("...", func() {
-			component.OpenFileSelector(settings.Get().YTdlpPath, func(uri fyne.URIReadCloser, err error) {
+			component.OpenFileSelector(settings.Get().GetYtdlpPath(), func(uri fyne.URIReadCloser, err error) {
 				if uri != nil {
-					settings.Get().YTdlpPath = uri.URI().Path()
+					settings.Get().SetYtdlpPath(uri.URI().Path())
 					settings.Save()
 					ytdlpPath.SetText(uri.URI().Path())
 				}
@@ -58,14 +58,14 @@ func settingsContainer() fyne.CanvasObject {
 	)
 
 	ffmpegLabel := widget.NewLabel("FFmpeg Path")
-	ffmpegPath := component.NewCopyableLabel(settings.Get().FFmpegPath, win)
+	ffmpegPath := component.NewCopyableLabel(settings.Get().GetFfmpegPath(), win)
 	ffmpegSelector := container.NewHBox(
 		ffmpegPath,
 		layout.NewSpacer(),
 		widget.NewButton("...", func() {
-			component.OpenFileSelector(settings.Get().FFmpegPath, func(uri fyne.URIReadCloser, err error) {
+			component.OpenFileSelector(settings.Get().GetFfmpegPath(), func(uri fyne.URIReadCloser, err error) {
 				if uri != nil {
-					settings.Get().FFmpegPath = uri.URI().Path()
+					settings.Get().SetFfmpegPath(uri.URI().Path())
 					settings.Save()
 					ffmpegPath.SetText(uri.URI().Path())
 				}
@@ -74,10 +74,10 @@ func settingsContainer() fyne.CanvasObject {
 	)
 
 	concurrentDownloads := binding.NewFloat()
-	_ = concurrentDownloads.Set(float64(settings.Get().ConcurrentDownloads))
+	_ = concurrentDownloads.Set(float64(settings.Get().GetConcurrentDownloads()))
 	concurrentDownloads.AddListener(binding.NewDataListener(func() {
 		if v, e := concurrentDownloads.Get(); e == nil {
-			settings.Get().ConcurrentDownloads = uint32(v)
+			settings.Get().SetConcurrentDownloads(uint32(v))
 			settings.Save()
 		}
 	}))
@@ -92,10 +92,10 @@ func settingsContainer() fyne.CanvasObject {
 	)
 
 	concurrentFragments := binding.NewFloat()
-	_ = concurrentFragments.Set(float64(settings.Get().ConcurrentFragments))
+	_ = concurrentFragments.Set(float64(settings.Get().GetConcurrentFragments()))
 	concurrentFragments.AddListener(binding.NewDataListener(func() {
 		if v, e := concurrentFragments.Get(); e == nil {
-			settings.Get().ConcurrentFragments = uint32(v)
+			settings.Get().SetConcurrentFragments(uint32(v))
 			settings.Save()
 		}
 	}))
@@ -113,20 +113,20 @@ func settingsContainer() fyne.CanvasObject {
 	thumbnailSelector := widget.NewSelect(
 		[]string{thumbnail.Always, thumbnail.VideoOnly, thumbnail.AudioOnly, thumbnail.Never},
 		func(value string) {
-			settings.Get().EmbedThumbnail = value
+			settings.Get().SetEmbedThumbnail(value)
 			settings.Save()
 		})
-	thumbnailSelector.SetSelected(settings.Get().EmbedThumbnail)
+	thumbnailSelector.SetSelected(settings.Get().GetEmbedThumbnail())
 
 	logPathLabel := widget.NewLabel("Path to log file")
-	logPathInput := component.NewCopyableLabel(settings.Get().LogPath, win)
+	logPathInput := component.NewCopyableLabel(settings.Get().GetLogPath(), win)
 	logPathSelector := container.NewHBox(
 		logPathInput,
 		layout.NewSpacer(),
 		widget.NewButton("...", func() {
-			component.OpenFileSelector(settings.Get().LogPath, func(uri fyne.URIReadCloser, err error) {
+			component.OpenFileSelector(settings.Get().GetLogPath(), func(uri fyne.URIReadCloser, err error) {
 				if uri != nil {
-					settings.Get().LogPath = uri.URI().Path()
+					settings.Get().SetLogPath(uri.URI().Path())
 					settings.Save()
 					logPathInput.SetText(uri.URI().Path())
 				}
@@ -136,9 +136,10 @@ func settingsContainer() fyne.CanvasObject {
 
 	extraYtpOptLabel := widget.NewLabel("Extra Yt-dlp options (space separated)")
 	extraYtpOptInputBinding := binding.NewString()
-	_ = extraYtpOptInputBinding.Set(settings.Get().ExtraYtdlpOptions)
+	_ = extraYtpOptInputBinding.Set(settings.Get().GetExtraYtdlpOptions())
 	extraYtpOptInputBinding.AddListener(binding.NewDataListener(func() {
-		settings.Get().ExtraYtdlpOptions, _ = extraYtpOptInputBinding.Get()
+		v, _ := extraYtpOptInputBinding.Get()
+		settings.Get().SetExtraYtdlpOptions(v)
 	}))
 	extraYtpOptInput := widget.NewEntryWithData(extraYtpOptInputBinding)
 

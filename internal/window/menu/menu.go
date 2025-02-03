@@ -6,11 +6,9 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
-	"github.com/rs/zerolog"
 	"ytb-downloader/internal/constants"
 	"ytb-downloader/internal/handle/request"
 	"ytb-downloader/internal/resource"
-	"ytb-downloader/internal/settings"
 	layout2 "ytb-downloader/internal/ui/layout"
 )
 
@@ -22,7 +20,6 @@ import (
 var win fyne.Window
 var table *widget.Table
 var input *widget.Entry
-var logger zerolog.Logger
 
 func OpenMenu(app fyne.App) fyne.Window {
 	CheckUpdate(func(latest bool, currVer string, latestVer string, err error) {
@@ -43,7 +40,6 @@ func OpenMenu(app fyne.App) fyne.Window {
 		table.Refresh()
 	})
 
-	logger = settings.Get().GetLogger().With().Str("scope", "gui/menu").Logger()
 	win = app.NewWindow("Yt-dlp GUI")
 	win.SetContent(container.New(
 		layout2.NewVLayout(2, 0.3, 0.7),

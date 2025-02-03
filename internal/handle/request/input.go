@@ -57,8 +57,8 @@ func flattenYoutubePlaylist(queue *[]*Request, link string) {
 
 	tempPath := temp.Name()
 	cmd := exec.Command(
-		settings.Get().GetYTdlpPath(),
-		append(settings.Get().GetExtraYtdlpOptions(),
+		settings.Get().GetYtdlpPath(),
+		append(settings.Get().ExtraYtdlpOptionsAsArray(),
 			"--skip-download",
 			"--flat-playlist",
 			"--ignore-errors",

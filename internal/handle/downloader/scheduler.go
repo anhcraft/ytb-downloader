@@ -23,7 +23,7 @@ func TerminateDownloadScheduler() {
 
 func runDownloadScheduler() {
 	for !interrupt.Load() {
-		if workerCount.Load() >= settings.Get().ConcurrentDownloads {
+		if workerCount.Load() >= settings.Get().GetConcurrentDownloads() {
 			continue
 		}
 

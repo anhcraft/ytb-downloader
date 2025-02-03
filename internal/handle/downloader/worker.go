@@ -30,7 +30,7 @@ func download(req *request.Request, callback func()) {
 
 	logger.Downloader.Printf("downloading %s", req.RawUrl())
 
-	cmd := exec.Command(settings.Get().GetYTdlpPath(), req.DownloadCmdArgs()...)
+	cmd := exec.Command(settings.Get().GetYtdlpPath(), req.DownloadCmdArgs()...)
 	request.DecorateCmd(cmd)
 	logger.Downloader.Printf("executing command %s", cmd.String())
 

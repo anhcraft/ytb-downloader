@@ -87,7 +87,7 @@ func (req *Request) TitleFetchCmdArgs() []string {
 }
 
 func (req *Request) GetTitleFetchCommand() string {
-	return settings.Get().GetYTdlpPath() + " " + shellquote.Join(req.TitleFetchCmdArgs())
+	return settings.Get().GetYtdlpPath() + " " + shellquote.Join(req.TitleFetchCmdArgs())
 }
 
 func (req *Request) SetTitleFetchCmdArgs(titleFetchCmdArgs []string) {
@@ -99,7 +99,7 @@ func (req *Request) DownloadCmdArgs() []string {
 }
 
 func (req *Request) GetDownloadCommand() string {
-	return settings.Get().GetYTdlpPath() + " " + shellquote.Join(req.DownloadCmdArgs())
+	return settings.Get().GetYtdlpPath() + " " + shellquote.Join(req.DownloadCmdArgs())
 }
 
 func (req *Request) SetDownloadCmdArgs(downloadCmdArgs []string) {
