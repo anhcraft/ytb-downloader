@@ -41,6 +41,25 @@ func OpenSettings(app fyne.App) fyne.Window {
 }
 
 func settingsContainer() fyne.CanvasObject {
+	downloadFolderLabel := widget.NewLabel("Download Folder")
+	downloadFolderInput := component.NewAutoSaveInput(settings.Get().GetDownloadFolder, func(val string) {
+		settings.Get().SetDownloadFolder(val)
+		settings.Save()
+	}, requirePathIsFolder)
+	downloadFolderSelector := container.NewBorder(
+		nil,
+		nil,
+		nil,
+		widget.NewButton("...", func() {
+			component.OpenFolderSelector(settings.Get().GetDownloadFolder(), func(uri fyne.ListableURI, err error) {
+				if uri != nil {
+					downloadFolderInput.SetText(uri.Path())
+				}
+			}, win)
+		}),
+		downloadFolderInput,
+	)
+
 	ytdlpLabel := widget.NewLabel("Yt-dlp Path")
 	ytdlpPathInput := component.NewAutoSaveInput(settings.Get().GetYtdlpPath, func(val string) {
 		settings.Get().SetYtdlpPath(val)
@@ -176,6 +195,7 @@ func settingsContainer() fyne.CanvasObject {
 		),
 		container.New(
 			layout.NewFormLayout(),
+			downloadFolderLabel, downloadFolderSelector,
 			ytdlpLabel, ytdlpSelector,
 			ffmpegLabel, ffmpegSelector,
 			concurrentDownloadsLabel, concurrentDownloadsSelector,

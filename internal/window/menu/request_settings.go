@@ -9,7 +9,6 @@ import (
 	"ytb-downloader/internal/format"
 	"ytb-downloader/internal/handle/request"
 	"ytb-downloader/internal/settings"
-	"ytb-downloader/internal/ui/component"
 )
 
 func requestSettings() fyne.CanvasObject {
@@ -21,22 +20,6 @@ func requestSettings() fyne.CanvasObject {
 			settings.Save()
 		})
 	fmtSelector.SetSelected(settings.Get().GetFormat())
-
-	downloadToLabel := widget.NewLabel("Download To")
-	downloadTo := component.NewCopyableLabel(truncateString(settings.Get().GetDownloadFolder(), 45), win)
-	downloadFolder := container.NewHBox(
-		downloadTo,
-		layout.NewSpacer(),
-		widget.NewButton("...", func() {
-			component.OpenFolderSelector(settings.Get().GetDownloadFolder(), func(uri fyne.ListableURI, err error) {
-				if uri != nil {
-					settings.Get().SetDownloadFolder(uri.Path())
-					settings.Save()
-					downloadTo.SetText(truncateString(uri.Path(), 30))
-				}
-			}, win)
-		}),
-	)
 
 	fetchBtn := widget.NewButton("Fetch", func() {
 		// The work is done async so we do not clear the input if it is in progress
@@ -62,7 +45,6 @@ func requestSettings() fyne.CanvasObject {
 		container.New(
 			layout.NewFormLayout(),
 			fmtLabel, fmtSelector,
-			downloadToLabel, downloadFolder,
 		),
 		container.NewHBox(
 			layout.NewSpacer(),
@@ -70,11 +52,4 @@ func requestSettings() fyne.CanvasObject {
 			downloadBtn,
 		),
 	)
-}
-
-func truncateString(s string, max int) string {
-	if len(s) > max-3 {
-		return s[:max] + "..."
-	}
-	return s
 }
