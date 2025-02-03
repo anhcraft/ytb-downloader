@@ -49,7 +49,7 @@ func requestTable() fyne.CanvasObject {
 		l.Alignment = fyne.TextAlignCenter
 		if id.Row < 0 {
 			if id.Col == 0 {
-				l.SetText("Name")
+				l.SetText("Title")
 			}
 			if id.Col == 1 {
 				l.SetText("Status")
@@ -77,11 +77,11 @@ func (b *TableEntry) TappedSecondary(e *fyne.PointEvent) {
 func NewTableEntry() *TableEntry {
 	entry := &TableEntry{}
 	entry.menu = fyne.NewMenu("",
+		fyne.NewMenuItem("Copy Input", func() {
+			win.Clipboard().SetContent(entry.req.Input())
+		}),
 		fyne.NewMenuItem("Copy URL", func() {
 			win.Clipboard().SetContent(entry.req.RawUrl())
-		}),
-		fyne.NewMenuItem("Copy Title", func() {
-			win.Clipboard().SetContent(entry.req.Title())
 		}),
 		fyne.NewMenuItem("Copy Download command", func() {
 			win.Clipboard().SetContent(entry.req.GetDownloadCommand())

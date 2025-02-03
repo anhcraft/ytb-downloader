@@ -36,6 +36,7 @@ func OpenRequestDebugViewer(app fyne.App, req *request.Request) fyne.Window {
 }
 
 func content(req *request.Request, win fyne.Window) fyne.CanvasObject {
+	inputEntry := component.NewCopyableLabel(req.Input(), win)
 	titleEntry := component.NewCopyableLabel(req.Title(), win)
 	urlEntry := component.NewCopyableLabel(req.RawUrl(), win)
 	formatEntry := component.NewCopyableLabel(req.Format(), win)
@@ -45,6 +46,7 @@ func content(req *request.Request, win fyne.Window) fyne.CanvasObject {
 
 	return container.New(
 		layout.NewFormLayout(),
+		widget.NewLabel("Input:"), inputEntry,
 		widget.NewLabel("Video Title:"), titleEntry,
 		widget.NewLabel("Video URL:"), urlEntry,
 		widget.NewLabel("Format:"), formatEntry,

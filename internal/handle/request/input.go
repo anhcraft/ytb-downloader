@@ -50,7 +50,7 @@ func ParseRequest(input string) []*Request {
 			continue
 		}
 
-		res = append(res, NewRequest(u))
+		res = append(res, NewRequest(v, u))
 
 	}
 
@@ -118,7 +118,7 @@ func flattenYoutubePlaylist(queue *[]*Request, link string) {
 		}
 
 		if u, err := url.ParseRequestURI(lines[i]); err == nil {
-			req := NewRequest(u)
+			req := NewRequest(lines[i], u)
 			req.SetTitle(lines[i+1])
 			req.SetTitleFetched(true)
 			*queue = append(*queue, req)

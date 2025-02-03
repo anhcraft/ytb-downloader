@@ -17,6 +17,7 @@ const (
 
 type Request struct {
 	// [*] following fields are expected to be read-only
+	input  string
 	url    *url.URL
 	rawUrl string // cache
 
@@ -42,12 +43,17 @@ type Request struct {
 	status atomic.Uint32
 }
 
-func NewRequest(url *url.URL) *Request {
+func NewRequest(input string, url *url.URL) *Request {
 	return &Request{
+		input:  input,
 		url:    url,
 		rawUrl: url.String(),
 		title:  url.String(),
 	}
+}
+
+func (req *Request) Input() string {
+	return req.input
 }
 
 func (req *Request) Url() *url.URL {

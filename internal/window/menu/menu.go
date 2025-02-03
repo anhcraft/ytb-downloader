@@ -35,7 +35,7 @@ func OpenMenu(app fyne.App) fyne.Window {
 	request.GetQueue().SetUpdateCallback(func(req *request.Request) {
 		// TODO thread-safe?
 		if req.Status() == request.StatusFailed {
-			input.SetText(input.Text + "\n" + req.RawUrl())
+			input.SetText(input.Text + "\n" + req.Input())
 		}
 		table.Refresh()
 	})
