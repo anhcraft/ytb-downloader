@@ -42,35 +42,41 @@ func OpenSettings(app fyne.App) fyne.Window {
 
 func settingsContainer() fyne.CanvasObject {
 	ytdlpLabel := widget.NewLabel("Yt-dlp Path")
-	ytdlpPath := component.NewCopyableLabel(settings.Get().GetYtdlpPath(), win)
-	ytdlpSelector := container.NewHBox(
-		ytdlpPath,
-		layout.NewSpacer(),
+	ytdlpPathInput := component.NewAutoSaveInput(settings.Get().GetYtdlpPath, func(val string) {
+		settings.Get().SetYtdlpPath(val)
+		settings.Save()
+	}, requirePathIsFile)
+	ytdlpSelector := container.NewBorder(
+		nil,
+		nil,
+		nil,
 		widget.NewButton("...", func() {
 			component.OpenFileSelector(settings.Get().GetYtdlpPath(), func(uri fyne.URIReadCloser, err error) {
 				if uri != nil {
-					settings.Get().SetYtdlpPath(uri.URI().Path())
-					settings.Save()
-					ytdlpPath.SetText(uri.URI().Path())
+					ytdlpPathInput.SetText(uri.URI().Path())
 				}
 			}, win)
 		}),
+		ytdlpPathInput,
 	)
 
 	ffmpegLabel := widget.NewLabel("FFmpeg Path")
-	ffmpegPath := component.NewCopyableLabel(settings.Get().GetFfmpegPath(), win)
-	ffmpegSelector := container.NewHBox(
-		ffmpegPath,
-		layout.NewSpacer(),
+	ffmpegPathInput := component.NewAutoSaveInput(settings.Get().GetFfmpegPath, func(val string) {
+		settings.Get().SetFfmpegPath(val)
+		settings.Save()
+	}, requirePathIsFile)
+	ffmpegSelector := container.NewBorder(
+		nil,
+		nil,
+		nil,
 		widget.NewButton("...", func() {
 			component.OpenFileSelector(settings.Get().GetFfmpegPath(), func(uri fyne.URIReadCloser, err error) {
 				if uri != nil {
-					settings.Get().SetFfmpegPath(uri.URI().Path())
-					settings.Save()
-					ffmpegPath.SetText(uri.URI().Path())
+					ffmpegPathInput.SetText(uri.URI().Path())
 				}
 			}, win)
 		}),
+		ffmpegPathInput,
 	)
 
 	concurrentDownloads := binding.NewFloat()
@@ -119,19 +125,22 @@ func settingsContainer() fyne.CanvasObject {
 	thumbnailSelector.SetSelected(settings.Get().GetEmbedThumbnail())
 
 	logPathLabel := widget.NewLabel("Path to log file")
-	logPathInput := component.NewCopyableLabel(settings.Get().GetLogPath(), win)
-	logPathSelector := container.NewHBox(
-		logPathInput,
-		layout.NewSpacer(),
+	logPathInput := component.NewAutoSaveInput(settings.Get().GetLogPath, func(val string) {
+		settings.Get().SetLogPath(val)
+		settings.Save()
+	}, requirePathIsFile)
+	logPathSelector := container.NewBorder(
+		nil,
+		nil,
+		nil,
 		widget.NewButton("...", func() {
 			component.OpenFileSelector(settings.Get().GetLogPath(), func(uri fyne.URIReadCloser, err error) {
 				if uri != nil {
-					settings.Get().SetLogPath(uri.URI().Path())
-					settings.Save()
 					logPathInput.SetText(uri.URI().Path())
 				}
 			}, win)
 		}),
+		logPathInput,
 	)
 
 	extraYtpOptLabel := widget.NewLabel("Extra Yt-dlp options (space separated)")
