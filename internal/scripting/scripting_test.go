@@ -10,7 +10,7 @@ func TestHandleDownload(t *testing.T) {
 url := import("url")
 
 _action := "default"
-_value := _input
+_url := _input
 
 process := func(input) {
     domain := url.extractDomain(input)
@@ -21,7 +21,7 @@ process := func(input) {
             videoID := query["v"][0]
             newURL := "https://youtu.be/" + videoID
             _action = "override"
-            _value = newURL
+            _url = newURL
             return
         }
     }
@@ -34,6 +34,6 @@ process(_input)
 		t.Fatal(err)
 	} else {
 		assert.Equal(t, "override", res.Action)
-		assert.Equal(t, "https://youtu.be/123", res.Value)
+		assert.Equal(t, "https://youtu.be/123", res.Url)
 	}
 }

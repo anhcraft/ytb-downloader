@@ -33,9 +33,9 @@ func ParseRequest(input string) []*Request {
 			case "skip":
 				continue
 			case "override":
-				link = result.Value
+				link = result.Url
 			case "custom":
-				link = result.Value
+				link = result.Url
 				custom = true
 				customFilepath = result.FilePath
 			default:

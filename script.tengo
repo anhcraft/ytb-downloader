@@ -9,6 +9,7 @@ In this script,
 
 - URL "https://www.youtubetrimmer.com/view/?v=X" will be rewritten to "https://youtu.be/X"
     For example: "https://www.youtubetrimmer.com/view/?v=dQw4w9WgXcQ"
+
 - Typing "gh:orgId/repoId[/branch]" will download the zip file of the repo at given branch (defaults to master)
     For example: "gh:d5/tengo", "gh:anhcraft/ytb-downloader/main"
 
@@ -28,7 +29,7 @@ txt := import("text")
 
 // Output variables
 _action := "default"
-_value := _input
+_url := _input
 _filepath := ""
 
 process := func(input) {
@@ -44,7 +45,7 @@ process := func(input) {
         }
 
         _action = "custom"
-        _value = "https://github.com/" + orgId + "/" + repoId + "/archive/refs/heads/" + branch +".zip"
+        _url = "https://github.com/" + orgId + "/" + repoId + "/archive/refs/heads/" + branch +".zip"
 
         // You can specify subdirectory here. They are automatically created
         _filepath = "@" + orgId + "/" + repoId + "/" + branch + ".zip"
@@ -63,7 +64,7 @@ process := func(input) {
             videoID := query["v"][0]
             newURL := "https://youtu.be/" + videoID
             _action = "override"
-            _value = newURL
+            _url = newURL
             fmt.println("Rewriting", input, "to", newURL)
             return
         }

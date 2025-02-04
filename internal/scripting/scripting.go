@@ -10,7 +10,7 @@ import (
 
 type HandleResult struct {
 	FilePath string
-	Value    string
+	Url      string
 	Action   string
 }
 
@@ -52,14 +52,14 @@ func HandleDownload(code []byte, input string) (HandleResult, error) {
 	}
 
 	action := compiled.Get("_action")
-	value := compiled.Get("_value")
+	url := compiled.Get("_url")
 
-	if action.IsUndefined() || value.IsUndefined() {
-		return HandleResult{}, errors.New("_action or _value is undefined")
+	if action.IsUndefined() || url.IsUndefined() {
+		return HandleResult{}, errors.New("_action or _url is undefined")
 	}
 
 	return HandleResult{
-		Value:    value.String(),
+		Url:      url.String(),
 		Action:   action.String(),
 		FilePath: compiled.Get("_filepath").String(),
 	}, nil

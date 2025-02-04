@@ -60,9 +60,10 @@ Example configuration for Linux environment:
 - The script is loaded every time a batch of input is _fetched_. However, if it does not exist, the default handle is used
 - The script is executed once for each request
 - Input: `_input` denotes a line of input (space-stripped guaranteed)
-- Output: `_action` and `_value`
+- Output: `_action` and `_url`
   - `_action = skip`: skip this request
-  - `_action = override`: override the input with `_value`, and continue with the default handle. Remember that the new input must be compatible to ytdlp
+  - `_action = override`: override the input with `_url`, and continue with the default handle. Remember that the new input must be compatible to ytdlp
+  - `_action = custom`: download the file from `_url` using custom downloader (not Yt-dlp) - you must also specify `_filepath` denoting the target file (subdirectories are automatically created)
   - other values: continue with the default handle
 - All Tengo stdlib modules are enabled (including file and OS access)
 - Additional modules (made by YTB-Downloader)
