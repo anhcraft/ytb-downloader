@@ -22,6 +22,16 @@ var table *widget.Table
 var input *widget.Entry
 
 func OpenMenu(app fyne.App) fyne.Window {
+	request.GetQueue().SetUpdateCallback(func(req *request.Request) {
+		// TODO thread-safe?
+		if req.Status() == request.StatusFailed {
+			input.SetText(input.Text + "\n" + req.Input())
+		}
+		table.Refresh()
+	})
+
+	win = app.NewWindow("Yt-dlp GUI")
+
 	CheckUpdate(func(latest bool, currVer string, latestVer string, err error) {
 		if !latest {
 			dialog.ShowInformation(
@@ -32,15 +42,6 @@ func OpenMenu(app fyne.App) fyne.Window {
 		}
 	})
 
-	request.GetQueue().SetUpdateCallback(func(req *request.Request) {
-		// TODO thread-safe?
-		if req.Status() == request.StatusFailed {
-			input.SetText(input.Text + "\n" + req.Input())
-		}
-		table.Refresh()
-	})
-
-	win = app.NewWindow("Yt-dlp GUI")
 	win.SetContent(container.New(
 		layout2.NewVLayout(2, 0.3, 0.7),
 		container.NewVBox(
