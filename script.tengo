@@ -31,6 +31,7 @@ txt := import("text")
 _action := "default"
 _url := _input
 _filepath := ""
+_title := ""
 
 process := func(input) {
     if txt.has_prefix(input, "gh:") {
@@ -49,6 +50,8 @@ process := func(input) {
 
         // You can specify subdirectory here. They are automatically created
         _filepath = "@" + orgId + "/" + repoId + "/" + branch + ".zip"
+
+        _title = "GitHub " + orgId + "/" + repoId + " (" + branch + ")"
 
         fmt.println("Custom downloading GitHub source", input, "into", _filepath)
 

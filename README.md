@@ -59,16 +59,26 @@ Example configuration for Linux environment:
 - You can write [Tengo](https://tengolang.com/) script to control fetching request
 - The script is loaded every time a batch of input is _fetched_. However, if it does not exist, the default handle is used
 - The script is executed once for each request
+
+### Input & Output variables
 - Input: `_input` denotes a line of input (space-stripped guaranteed)
-- Output: `_action` and `_url`
+- Required output: `_action` and `_url`
   - `_action = skip`: skip this request
   - `_action = override`: override the input with `_url`, and continue with the default handle. Remember that the new input must be compatible to ytdlp
   - `_action = custom`: download the file from `_url` using custom downloader (not Yt-dlp) - you must also specify `_filepath` denoting the target file (subdirectories are automatically created)
   - other values: continue with the default handle
-- All Tengo stdlib modules are enabled (including file and OS access)
+- Optional output:
+  - `_title`: title of the request (defaults to the input)
+
+### Modules
+- All Tengo standard-library modules are enabled (including file and OS access)
 - Additional modules (made by YTB-Downloader)
   - `url`: URL utilities ([View docs](https://github.com/anhcraft/ytb-downloader/blob/main/internal/scripting/module/url.go))
+
+### Security
 - **Warning**: Be careful when using the script, you must acknowledge what it does under the hood. Do not use script taken from untrusted sources.
+
+### Example
 - See [script.tengo](script.tengo) for an example
 
 ## Notes

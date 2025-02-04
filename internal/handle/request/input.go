@@ -17,8 +17,9 @@ func ParseRequest(input string) []*Request {
 	for _, in := range strings.Split(input, "\n") {
 		in = strings.TrimSpace(in)
 		link := in
-		custom := false
+		customDownload := false
 		customFilepath := ""
+		customTitle := ""
 
 		if scriptCode != nil {
 			logger.Queue.Println("running script at input:", in)
@@ -36,10 +37,14 @@ func ParseRequest(input string) []*Request {
 				link = result.Url
 			case "custom":
 				link = result.Url
-				custom = true
+				customDownload = true
 				customFilepath = result.FilePath
 			default:
 				// do nothing
+			}
+
+			if len(result.Title) > 0 {
+				customTitle = result.Title
 			}
 		}
 
@@ -49,10 +54,16 @@ func ParseRequest(input string) []*Request {
 			continue
 		}
 
-		if custom {
+		// Custom Download mode
+		if customDownload {
 			req := NewRequest(in, u)
 			req.SetCustom(true)
 			req.SetFilePath(customFilepath)
+			if len(customTitle) > 0 {
+				req.SetTitle(customTitle)
+			}
+			// no matter if title is provided or not, custom mode does not use title-fetching feature
+			req.SetTitleFetched(true)
 			res = append(res, req)
 			continue
 		}
@@ -65,7 +76,14 @@ func ParseRequest(input string) []*Request {
 			continue
 		}
 
-		res = append(res, NewRequest(in, u))
+		req := NewRequest(in, u)
+
+		if len(customTitle) > 0 {
+			req.SetTitle(customTitle)
+			req.SetTitleFetched(true)
+		}
+
+		res = append(res, req)
 
 	}
 

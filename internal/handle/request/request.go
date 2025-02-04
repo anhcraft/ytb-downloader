@@ -50,7 +50,7 @@ func NewRequest(input string, url *url.URL) *Request {
 		input:  input,
 		url:    url,
 		rawUrl: url.String(),
-		title:  url.String(),
+		title:  input,
 	}
 }
 

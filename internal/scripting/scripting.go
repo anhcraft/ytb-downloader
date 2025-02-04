@@ -10,6 +10,7 @@ import (
 
 type HandleResult struct {
 	FilePath string
+	Title    string
 	Url      string
 	Action   string
 }
@@ -58,9 +59,23 @@ func HandleDownload(code []byte, input string) (HandleResult, error) {
 		return HandleResult{}, errors.New("_action or _url is undefined")
 	}
 
+	filepath := compiled.Get("_filepath")
+
+	if action.String() == "custom" && filepath.IsUndefined() {
+		return HandleResult{}, errors.New("_filepath is required in custom mode")
+	}
+
 	return HandleResult{
 		Url:      url.String(),
 		Action:   action.String(),
-		FilePath: compiled.Get("_filepath").String(),
+		FilePath: getOptional(compiled, "_filepath"),
+		Title:    getOptional(compiled, "_title"),
 	}, nil
+}
+
+func getOptional(compiled *tengo.Compiled, variable string) string {
+	if compiled.Get(variable).IsUndefined() {
+		return ""
+	}
+	return compiled.Get(variable).String()
 }
