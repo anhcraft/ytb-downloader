@@ -47,6 +47,7 @@ func OpenInfo(app fyne.App) fyne.Window {
 	win.SetIcon(resource.ProgramIcon)
 	win.Show()
 	win.SetOnClosed(func() {
+		close(done)
 		win = nil
 	})
 
