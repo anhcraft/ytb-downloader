@@ -8,6 +8,7 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
+	"os"
 	"runtime"
 	"time"
 	"ytb-downloader/internal/constants"
@@ -55,6 +56,9 @@ func OpenInfo(app fyne.App) fyne.Window {
 }
 
 func content(ds *dynamicStats, win fyne.Window) fyne.CanvasObject {
+	appVersionLabel := component.NewCopyableLabel(fyne.CurrentApp().Metadata().Version, win)
+	execFileLabel := component.NewCopyableLabel(ExecutableFile(), win)
+
 	osLabel := component.NewCopyableLabel(runtime.GOOS, win)
 	archLabel := component.NewCopyableLabel(runtime.GOARCH, win)
 	goVersionLabel := component.NewCopyableLabel(runtime.Version(), win)
@@ -73,6 +77,11 @@ func content(ds *dynamicStats, win fyne.Window) fyne.CanvasObject {
 			layout.NewSpacer(),
 			homepageBtn,
 		),
+		widget.NewForm(
+			widget.NewFormItem("App Version", appVersionLabel),
+			widget.NewFormItem("Executable File", execFileLabel),
+		),
+		widget.NewSeparator(),
 		widget.NewForm(
 			widget.NewFormItem("Operating System", osLabel),
 			widget.NewFormItem("Architecture", archLabel),
@@ -109,4 +118,12 @@ func updateStats(ds *dynamicStats, done <-chan struct{}) {
 			return
 		}
 	}
+}
+
+func ExecutableFile() string {
+	exec, err := os.Executable()
+	if err != nil {
+		return ""
+	}
+	return exec
 }
