@@ -31,29 +31,19 @@ A simple GUI for yt-dlp. [Download here](https://github.com/anhcraft/ytb-downloa
 ### Windows
 - Download [FFmpeg](https://ffmpeg.org/) (including `ffmpeg` and `ffprobe`)
 - Download [yt-dlp](https://github.com/yt-dlp/yt-dlp) binary file
-- Configure using GUI or via file (see below)
+- Configure using GUI or via file
 
 ## Linux
-- Install FFmpeg: `sudo apt install ffmpeg` (including `ffmpeg` and `ffprobe`)
-- Locate FFmpeg binary file: `sudo dpkg -L ffmpeg` (usually `/usr/bin/ffmpeg`)
-- Download [yt-dlp](https://github.com/yt-dlp/yt-dlp) binary file
-- Configure using GUI or via file (see below)
-
-## Configuration
-Open the file `settings.json` via an editor or command: `sudo nano settings.json`.
-
-Example configuration for Linux environment:
-```json
-{
-  "format":"Default",
-  "embedThumbnail":"AudioOnly",
-  "ytdlpPath":"/yt-dlp_linux",
-  "ffmpegPath":"/usr/bin/ffmpeg",
-  "concurrentDownloads":1,
-  "concurrentFragments":3,
-  "logPath": "./log.txt"
-}
+- Install FFmpeg: (including `ffmpeg` and `ffprobe`)
+```bash
+sudo apt install ffmpeg
 ```
+- Locate FFmpeg binary file (e.g. `/usr/bin/ffmpeg`)
+```bash
+sudo dpkg -L ffmpeg
+```
+- Download [yt-dlp](https://github.com/yt-dlp/yt-dlp) binary file
+- Configure using GUI or via file
 
 ## Scripting
 - You can write [Tengo](https://tengolang.com/) script to control fetching request
@@ -82,12 +72,29 @@ Example configuration for Linux environment:
 ### Example
 - See [script.tengo](script.tengo) for an example
 
-## Notes
-- If you use the Windows installer, the default installation path is `C:\Program Files (x86)\YTB Downloader`
-- `"ERROR: [WinError 32] The process cannot access the file because it is being used by another process:"`: might happen when you download the video into the folder currently opening in the IDE. To fix, pick a different download location.
-- Cannot run on Windows? Enable running as administrator (see: https://i.imgur.com/ALTWIM4.png)
-- Got `HTTP Error 403: Forbidden`? You might be playing YouTube from the browser while downloading from the GUI both at the same time
+## FAQ
+
+### 1. How do I find the installation folder?
+- The installation folder must contain the setting file, as such you can open the settings window, click on "Locate setting file" to open the explorer at the installation folder (Windows-only)
+- Another approach is to open the info window, then find the path to the executable file (which must be inside the installation folder)
+
+### 2. I got `"ERROR: [WinError 32] The process cannot access the file because it is being used by another process:"`
+- This might happen when you download the video into the folder currently opening in the IDE. To resolve, pick a different download location.
+
+### 3. I am required to elevate privilege (administrator) to open the app
+- The problem happens when you install the app for all users (under `Program Files (x86)`). To resolve, enable running as administrator (see: https://i.imgur.com/ALTWIM4.png) - this is one-time process and typically does not need to do it again when manually updating the app
+- Alternatively, install the app for a specific user. The app will be installed to `C:\Users\User\AppData\Local\Programs\YTB Downloader`
+
+### 4. I got `HTTP Error 403: Forbidden` when downloading from YouTube
+- You might be playing YouTube from the browser while downloading from the GUI both at the same time
 
 ## Building
-- To build the program, first install Fyne: `go install fyne.io/fyne/v2/cmd/fyne@latest`
-- Build the program: `sudo ./build.sh`
+- To build the program, first install Fyne: 
+```bash
+go install fyne.io/fyne/v2/cmd/fyne@latest
+````
+- Build the program:
+
+```bash
+sudo ./build.sh
+````
