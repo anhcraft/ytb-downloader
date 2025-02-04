@@ -23,7 +23,7 @@ func OpenExplorer(path string) {
 		}
 
 		cmd := exec.Command("explorer", "/select,", absPath)
-		request.DecorateCmd(cmd)
+		//request.DecorateCmd(cmd) // this does not bring up commandline, so do not hide window
 		_ = cmd.Run()
 	}
 }
