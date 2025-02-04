@@ -40,9 +40,23 @@ func content(req *request.Request, win fyne.Window) fyne.CanvasObject {
 	titleEntry := component.NewCopyableLabel(req.Title(), win)
 	urlEntry := component.NewCopyableLabel(req.RawUrl(), win)
 	formatEntry := component.NewCopyableLabel(req.Format(), win)
+	errorLogEntry := component.NewWrappedCopyableLabel(fmt.Sprint(req.DownloadError()), win, 120)
+
+	if req.Custom() {
+		filePathEntry := component.NewCopyableLabel(req.FilePath(), win)
+		return container.New(
+			layout.NewFormLayout(),
+			widget.NewLabel("Input:"), inputEntry,
+			widget.NewLabel("File Path:"), filePathEntry,
+			widget.NewLabel("Video Title:"), titleEntry,
+			widget.NewLabel("Video URL:"), urlEntry,
+			widget.NewLabel("Format:"), formatEntry,
+			widget.NewLabel("Error Log:"), errorLogEntry,
+		)
+	}
+
 	titleFetchCmdEntry := component.NewWrappedCopyableLabel(req.GetTitleFetchCommand(), win, 120)
 	downloadCmdEntry := component.NewWrappedCopyableLabel(req.GetDownloadCommand(), win, 200)
-	errorLogEntry := component.NewWrappedCopyableLabel(fmt.Sprint(req.DownloadError()), win, 120)
 
 	return container.New(
 		layout.NewFormLayout(),

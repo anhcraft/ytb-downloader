@@ -18,7 +18,7 @@ func FetchTitles(req []*Request, callback func()) {
 }
 
 func fetchTitle(req *Request) bool {
-	if req.titleFetched {
+	if req.TitleFetched() || req.Custom() {
 		logger.Queue.Printf("SKIPPED fetching title for %s", req.RawUrl())
 		return true
 	}

@@ -14,12 +14,15 @@ func ParseRequest(input string) []*Request {
 	scriptCode := settings.Get().LoadScriptFile()
 	res := make([]*Request, 0)
 
-	for _, v := range strings.Split(input, "\n") {
-		v = strings.TrimSpace(v)
+	for _, in := range strings.Split(input, "\n") {
+		in = strings.TrimSpace(in)
+		link := in
+		custom := false
+		customFilepath := ""
 
 		if scriptCode != nil {
-			logger.Queue.Println("running script at input:", v)
-			result, err := scripting.HandleDownload(scriptCode, v)
+			logger.Queue.Println("running script at input:", in)
+			result, err := scripting.HandleDownload(scriptCode, in)
 
 			if err != nil {
 				logger.Queue.Println("error running script:", err)
@@ -30,15 +33,27 @@ func ParseRequest(input string) []*Request {
 			case "skip":
 				continue
 			case "override":
-				v = result.Value
+				link = result.Value
+			case "custom":
+				link = result.Value
+				custom = true
+				customFilepath = result.FilePath
 			default:
 				// do nothing
 			}
 		}
 
-		u, err := url.ParseRequestURI(v)
+		u, err := url.ParseRequestURI(link)
 
 		if err != nil {
+			continue
+		}
+
+		if custom {
+			req := NewRequest(in, u)
+			req.SetCustom(true)
+			req.SetFilePath(customFilepath)
+			res = append(res, req)
 			continue
 		}
 
@@ -46,11 +61,11 @@ func ParseRequest(input string) []*Request {
 
 		// flatten YouTube playlist
 		if strings.HasSuffix(u.Host, "youtube.com") && u.Path == "/playlist" {
-			flattenYoutubePlaylist(&res, v)
+			flattenYoutubePlaylist(&res, link)
 			continue
 		}
 
-		res = append(res, NewRequest(v, u))
+		res = append(res, NewRequest(in, u))
 
 	}
 

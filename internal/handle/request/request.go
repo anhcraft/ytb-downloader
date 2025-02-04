@@ -17,9 +17,11 @@ const (
 
 type Request struct {
 	// [*] following fields are expected to be read-only
-	input  string
-	url    *url.URL
-	rawUrl string // cache
+	input    string
+	url      *url.URL
+	rawUrl   string // cache
+	custom   bool   // Use custom downloader instead of ytdlp
+	filePath string // currently only work for custom mode
 
 	// [*] following fields use relaxed consistency, no lock required
 	// init on "Fetch" button
@@ -62,6 +64,22 @@ func (req *Request) Url() *url.URL {
 
 func (req *Request) RawUrl() string {
 	return req.rawUrl
+}
+
+func (req *Request) Custom() bool {
+	return req.custom
+}
+
+func (req *Request) SetCustom(custom bool) {
+	req.custom = custom
+}
+
+func (req *Request) FilePath() string {
+	return req.filePath
+}
+
+func (req *Request) SetFilePath(filePath string) {
+	req.filePath = filePath
 }
 
 func (req *Request) Title() string {

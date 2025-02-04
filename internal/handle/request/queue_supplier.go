@@ -46,6 +46,11 @@ func SupplyQueue(req []*Request) {
 	}
 
 	for _, r := range req {
+		if r.Custom() {
+			r.SetFormat(format.Default)
+			continue
+		}
+
 		r.SetFormat(fmt)
 
 		args := slices.Clone(commonArgs)

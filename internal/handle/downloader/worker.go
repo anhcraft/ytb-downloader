@@ -12,6 +12,27 @@ import (
 )
 
 func download(req *request.Request, callback func()) {
+	if req.Custom() {
+		err := DownloadFile(req, func(p *request.Progress) {
+			req.SetDownloadProgress(p.DownloadProgress)
+			req.SetDownloadedSize(p.DownloadedSize)
+			req.SetDownloadTotalSize(p.DownloadTotalSize)
+			req.SetDownloadSpeed(p.DownloadSpeed)
+			req.SetDownloadEta(p.DownloadEta)
+			request.GetQueue().OnUpdate(req)
+		})
+		if err != nil {
+			logger.Downloader.Println("error custom download:", err)
+			req.SetDownloadError(err)
+			req.SetStatus(request.StatusFailed)
+		} else {
+			req.SetStatus(request.StatusCompleted)
+		}
+		request.GetQueue().OnUpdate(req)
+		callback()
+		return
+	}
+
 	var err error
 
 	defer func() {

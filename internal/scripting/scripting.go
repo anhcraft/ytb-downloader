@@ -9,8 +9,9 @@ import (
 )
 
 type HandleResult struct {
-	Value  string
-	Action string
+	FilePath string
+	Value    string
+	Action   string
 }
 
 var moduleMap *tengo.ModuleMap
@@ -58,7 +59,8 @@ func HandleDownload(code []byte, input string) (HandleResult, error) {
 	}
 
 	return HandleResult{
-		Value:  value.String(),
-		Action: action.String(),
+		Value:    value.String(),
+		Action:   action.String(),
+		FilePath: compiled.Get("_filepath").String(),
 	}, nil
 }
