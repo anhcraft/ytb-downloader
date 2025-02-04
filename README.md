@@ -65,7 +65,8 @@ Example configuration for Linux environment:
 - Required output: `_action` and `_url`
   - `_action = skip`: skip this request
   - `_action = override`: override the input with `_url`, and continue with the default handle. Remember that the new input must be compatible to ytdlp
-  - `_action = custom`: download the file from `_url` using custom downloader (not Yt-dlp) - you must also specify `_filepath` denoting the target file (subdirectories are automatically created)
+  - `_action = custom`: download the file from `_url` using custom downloader (not Yt-dlp)
+    - You must also specify `_filepath` denoting the target file (subdirectories are automatically created). Prefix the path with `$DOWNLOAD_FOLDER/` to start at the download folder
   - other values: continue with the default handle
 - Optional output:
   - `_title`: title of the request (defaults to the input)

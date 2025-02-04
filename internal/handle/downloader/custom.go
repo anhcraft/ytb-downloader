@@ -7,16 +7,31 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 	"ytb-downloader/internal/constants/downloadmode"
+	"ytb-downloader/internal/handle/logger"
 	"ytb-downloader/internal/handle/request"
 	"ytb-downloader/internal/settings"
 )
+
+const DownloadFolderRelativePrefix = "$DOWNLOAD_FOLDER"
 
 var DownloadExistsError = errors.New("path exists (disallow overwrite is enabled)")
 
 func DownloadFile(req *request.Request, reportProgress func(*request.Progress)) error {
 	filePath := req.FilePath()
+
+	if len(filePath) == 0 {
+		return errors.New("file path is empty")
+	}
+
+	if strings.HasPrefix(filePath, DownloadFolderRelativePrefix) {
+		filePath = filepath.Join(settings.Get().GetDownloadFolder(), filePath[len(DownloadFolderRelativePrefix):])
+	}
+
+	logger.Downloader.Printf("downloading %s into %s", req.RawUrl(), filePath)
+
 	fi, err := os.Stat(filePath)
 	if err == nil {
 		if fi.IsDir() {

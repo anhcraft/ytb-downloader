@@ -49,11 +49,13 @@ process := func(input) {
         _url = "https://github.com/" + orgId + "/" + repoId + "/archive/refs/heads/" + branch +".zip"
 
         // You can specify subdirectory here. They are automatically created
-        _filepath = "@" + orgId + "/" + repoId + "/" + branch + ".zip"
+        // The prefix $DOWNLOAD_FOLDER is replaced with the actual download folder
+        // Without $DOWNLOAD_FOLDER, the download folder starts from the current working directory
+        _filepath = "$DOWNLOAD_FOLDER/@" + orgId + "/" + repoId + "/" + branch + ".zip"
 
         _title = "GitHub " + orgId + "/" + repoId + " (" + branch + ")"
 
-        fmt.println("Custom downloading GitHub source", input, "into", _filepath)
+        fmt.println("Custom downloading GitHub source ", input, " into ", _filepath)
 
         return
     }
@@ -68,7 +70,7 @@ process := func(input) {
             newURL := "https://youtu.be/" + videoID
             _action = "override"
             _url = newURL
-            fmt.println("Rewriting", input, "to", newURL)
+            fmt.println("Rewriting ", input, " to ", newURL)
             return
         }
     }
