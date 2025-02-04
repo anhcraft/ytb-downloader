@@ -5,6 +5,8 @@ const (
 	MainWindowHeight         = 600
 	SettingWindowWidth       = 1000
 	SettingWindowHeight      = 600
+	InfoWindowWidth          = 1000
+	InfoWindowHeight         = 600
 	FileDialogWidth          = MainWindowWidth - 40
 	FileDialogHeight         = MainWindowHeight - 40
 	RequestDebugWindowWidth  = MainWindowWidth * 0.7
