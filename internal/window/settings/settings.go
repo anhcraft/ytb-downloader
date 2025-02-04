@@ -9,9 +9,10 @@ import (
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 	"ytb-downloader/internal/constants"
+	"ytb-downloader/internal/constants/downloadmode"
+	"ytb-downloader/internal/constants/thumbnail"
 	"ytb-downloader/internal/resource"
 	"ytb-downloader/internal/settings"
-	"ytb-downloader/internal/thumbnail"
 	"ytb-downloader/internal/ui/component"
 	"ytb-downloader/internal/window"
 )
@@ -134,6 +135,15 @@ func settingsContainer() fyne.CanvasObject {
 		widget.NewSliderWithData(1, 10, concurrentFragments),
 	)
 
+	disallowOverwriteLabel := widget.NewLabel("Disallow Overwrite")
+	disallowOverwriteSelector := widget.NewSelect(
+		[]string{downloadmode.Default, downloadmode.CustomDownloadOnly, downloadmode.YtdlpDownloadOnly},
+		func(value string) {
+			settings.Get().SetDisallowOverwrite(value)
+			settings.Save()
+		})
+	disallowOverwriteSelector.SetSelected(settings.Get().GetDisallowOverwrite())
+
 	thumbnailLabel := widget.NewLabel("Embed Thumbnail")
 	thumbnailSelector := widget.NewSelect(
 		[]string{thumbnail.Always, thumbnail.VideoOnly, thumbnail.AudioOnly, thumbnail.Never},
@@ -219,6 +229,7 @@ func settingsContainer() fyne.CanvasObject {
 			ffmpegLabel, ffmpegSelector,
 			concurrentDownloadsLabel, concurrentDownloadsSelector,
 			concurrentFragmentsLabel, concurrentFragmentsSelector,
+			disallowOverwriteLabel, disallowOverwriteSelector,
 			thumbnailLabel, thumbnailSelector,
 			logPathLabel, logPathSelector,
 			extraYtpOptLabel, extraYtpOptInput,

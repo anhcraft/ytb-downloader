@@ -206,7 +206,7 @@ func (req *Request) DescribeStatus() string {
 	case StatusCompleted:
 		return "Completed"
 	case StatusFailed:
-		return "Failed"
+		return "Failed: " + req.DownloadError().Error()
 	case StatusTerminated:
 		return "Terminated"
 	}

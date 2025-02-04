@@ -6,7 +6,7 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
-	"ytb-downloader/internal/format"
+	"ytb-downloader/internal/constants/format"
 	"ytb-downloader/internal/handle/request"
 	"ytb-downloader/internal/settings"
 )

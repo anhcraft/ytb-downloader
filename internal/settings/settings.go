@@ -4,8 +4,9 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"ytb-downloader/internal/format"
-	"ytb-downloader/internal/thumbnail"
+	"ytb-downloader/internal/constants/downloadmode"
+	"ytb-downloader/internal/constants/format"
+	"ytb-downloader/internal/constants/thumbnail"
 )
 
 type Settings struct {
@@ -16,6 +17,7 @@ type Settings struct {
 	FfmpegPath          string `json:"ffmpegPath,omitempty"`
 	ConcurrentDownloads uint32 `json:"concurrentDownloads,omitempty"`
 	ConcurrentFragments uint32 `json:"concurrentFragments,omitempty"`
+	DisallowOverwrite   string `json:"disallowOverwrite,omitempty"`
 	LogPath             string `json:"logPath,omitempty"`
 	ExtraYtdlpOptions   string `json:"extraYtdlpOptions,omitempty"`
 	ScriptFile          string `json:"scriptingFile,omitempty"`
@@ -30,6 +32,7 @@ func NewSettings() *Settings {
 		FfmpegPath:          "",
 		ConcurrentDownloads: 1,
 		ConcurrentFragments: 3,
+		DisallowOverwrite:   downloadmode.Default,
 		LogPath:             "",
 		ExtraYtdlpOptions:   "",
 	}
@@ -40,6 +43,9 @@ func (s *Settings) Normalize() {
 	s.FfmpegPath = strings.TrimSpace(s.FfmpegPath)
 	s.LogPath = strings.TrimSpace(s.LogPath)
 	s.DownloadFolder = strings.TrimSpace(s.DownloadFolder)
+	if !downloadmode.IsValid(s.DisallowOverwrite) {
+		s.DisallowOverwrite = downloadmode.Default
+	}
 	if !format.IsValid(s.Format) {
 		s.Format = format.Default
 	}
@@ -130,6 +136,14 @@ func (s *Settings) GetConcurrentFragments() uint32 {
 
 func (s *Settings) SetConcurrentFragments(concurrentFragments uint32) {
 	s.ConcurrentFragments = concurrentFragments
+}
+
+func (s *Settings) GetDisallowOverwrite() string {
+	return s.DisallowOverwrite
+}
+
+func (s *Settings) SetDisallowOverwrite(disallowOverwrite string) {
+	s.DisallowOverwrite = disallowOverwrite
 }
 
 func (s *Settings) GetLogPath() string {

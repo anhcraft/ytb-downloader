@@ -3,9 +3,10 @@ package request
 import (
 	"slices"
 	"strconv"
-	"ytb-downloader/internal/format"
+	"ytb-downloader/internal/constants/downloadmode"
+	"ytb-downloader/internal/constants/format"
+	"ytb-downloader/internal/constants/thumbnail"
 	"ytb-downloader/internal/settings"
-	"ytb-downloader/internal/thumbnail"
 )
 
 func SupplyQueue(req []*Request) {
@@ -15,6 +16,10 @@ func SupplyQueue(req []*Request) {
 		"--concurrent-fragments", strconv.FormatUint(uint64(settings.Get().GetConcurrentFragments()), 10),
 		"--abort-on-unavailable-fragments",
 		"-P", settings.Get().GetDownloadFolder())
+
+	if downloadmode.HasYtdlpDownload(settings.Get().GetDisallowOverwrite()) {
+		commonArgs = append(commonArgs, "--no-overwrites")
+	}
 
 	if fp := settings.Get().GetFfmpegPath(); len(fp) > 0 {
 		commonArgs = append(commonArgs, "--ffmpeg-location", fp)

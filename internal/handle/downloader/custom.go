@@ -8,8 +8,12 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+	"ytb-downloader/internal/constants/downloadmode"
 	"ytb-downloader/internal/handle/request"
+	"ytb-downloader/internal/settings"
 )
+
+var DownloadExistsError = errors.New("path exists (disallow overwrite is enabled)")
 
 func DownloadFile(req *request.Request, reportProgress func(*request.Progress)) error {
 	filePath := req.FilePath()
@@ -17,6 +21,9 @@ func DownloadFile(req *request.Request, reportProgress func(*request.Progress)) 
 	if err == nil {
 		if fi.IsDir() {
 			return fmt.Errorf("path %s exists but is a directory", filePath)
+		}
+		if downloadmode.HasCustomDownload(settings.Get().GetDisallowOverwrite()) {
+			return DownloadExistsError
 		}
 	} else if os.IsNotExist(err) {
 		dir := filepath.Dir(filePath)
