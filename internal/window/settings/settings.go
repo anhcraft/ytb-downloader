@@ -178,6 +178,7 @@ func settingsContainer() fyne.CanvasObject {
 	extraYtpOptInputBinding.AddListener(binding.NewDataListener(func() {
 		v, _ := extraYtpOptInputBinding.Get()
 		settings.Get().SetExtraYtdlpOptions(v)
+		settings.Save()
 	}))
 	extraYtpOptInput := widget.NewEntryWithData(extraYtpOptInputBinding)
 
