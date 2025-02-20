@@ -14,6 +14,7 @@ func toolbar(app fyne.App) fyne.CanvasObject {
 	toolbar := widget.NewToolbar(
 		widget.NewToolbarSpacer(),
 		widget.NewToolbarAction(resource.EraserIcon, func() {
+			table.ScrollToTop()
 			request.GetTable().Clear()
 			table.Refresh()
 		}),
