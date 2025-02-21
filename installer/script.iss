@@ -5,7 +5,7 @@
 #define MyAppVersion "1.0.8"
 #define MyAppPublisher "Anh Duy"
 #define MyAppURL "https://anhcraft.dev"
-#define MyAppExeName "ytb-downloader.exe"
+#define MyAppExeName "YTB Downloader.exe"
 #define MyAppAssocName MyAppName + ""
 #define MyAppAssocExt ".exe"
 #define MyAppAssocKey StringChange(MyAppAssocName, " ", "") + MyAppAssocExt
