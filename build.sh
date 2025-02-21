@@ -1,7 +1,7 @@
 #!/bin/bash
 
 os=$(uname -s)
-version="1.0.8"
+version="1.0.9"
 
 case "$os" in
     Darwin)

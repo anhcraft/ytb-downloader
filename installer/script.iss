@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "YTB Downloader"
-#define MyAppVersion "1.0.8"
+#define MyAppVersion "1.0.9"
 #define MyAppPublisher "Anh Duy"
 #define MyAppURL "https://anhcraft.dev"
 #define MyAppExeName "YTB Downloader.exe"
