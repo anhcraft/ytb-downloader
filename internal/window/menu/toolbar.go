@@ -6,8 +6,6 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
-	"ytb-downloader/internal/handle/request"
-	"ytb-downloader/internal/resource"
 	"ytb-downloader/internal/settings"
 	"ytb-downloader/internal/window/info"
 	"ytb-downloader/internal/window/profile"
@@ -43,11 +41,7 @@ func toolbar(app fyne.App) fyne.CanvasObject {
 					profileListRefreshTrigger = nil
 				})
 			}),
-			widget.NewToolbarAction(resource.EraserIcon, func() {
-				table.ScrollToTop()
-				request.GetTable().Clear()
-				table.Refresh()
-			}),
+			widget.NewToolbarSeparator(),
 			widget.NewToolbarAction(theme.InfoIcon(), func() {
 				info.OpenInfo(app)
 			}),

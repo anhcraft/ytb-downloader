@@ -8,6 +8,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 	"ytb-downloader/internal/constants/format"
 	"ytb-downloader/internal/handle/request"
+	"ytb-downloader/internal/resource"
 	"ytb-downloader/internal/settings"
 )
 
@@ -21,7 +22,7 @@ func requestSettings() fyne.CanvasObject {
 		})
 	fmtSelector.SetSelected(settings.Get().GetFormat())
 
-	fetchBtn := widget.NewButton("Fetch", func() {
+	fetchBtn := widget.NewButtonWithIcon("Fetch", theme.SearchIcon(), func() {
 		// The work is done async so we do not clear the input if it is in progress
 		if FetchInput(input.Text, func(req []*request.Request) {
 			request.FetchTitles(req, func() {
@@ -34,14 +35,19 @@ func requestSettings() fyne.CanvasObject {
 			input.SetText("")
 		}
 	})
-	fetchBtn.SetIcon(theme.SearchIcon())
 
-	downloadBtn := widget.NewButton("Download", func() {
+	downloadBtn := widget.NewButtonWithIcon("Download", theme.DownloadIcon(), func() {
 		request.SupplyQueue(request.GetTable().GetAllByStatus(request.StatusInQueue))
 	})
-	downloadBtn.SetIcon(theme.DownloadIcon())
+
+	clearBtn := widget.NewButtonWithIcon("Clear", resource.EraserIcon, func() {
+		table.ScrollToTop()
+		request.GetTable().Clear()
+		table.Refresh()
+	})
 
 	return container.NewVBox(
+		layout.NewSpacer(),
 		container.New(
 			layout.NewFormLayout(),
 			fmtLabel, fmtSelector,
@@ -50,6 +56,7 @@ func requestSettings() fyne.CanvasObject {
 			layout.NewSpacer(),
 			fetchBtn,
 			downloadBtn,
+			clearBtn,
 		),
 	)
 }
