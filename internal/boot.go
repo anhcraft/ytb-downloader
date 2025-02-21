@@ -16,7 +16,7 @@ import (
 var myApp fyne.App
 
 func Init() {
-	settings.Load()
+	settings.InitManager()
 	logger.InitLogger()
 	downloader.InitDownloadScheduler()
 

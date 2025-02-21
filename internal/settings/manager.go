@@ -1,45 +1,133 @@
 package settings
 
 import (
-	"encoding/json"
-	"log"
-	"os"
+	"errors"
+	"sync"
 )
 
-const SETTINGS_FILE = "settings.json"
+const defaultProfileCollectionPath = "profiles.json"
 
-var settings *Settings
+var profileCollection *ProfileCollection
+var currentSettings *Settings
+var currentProfile Profile
+var lock sync.RWMutex
+
+func InitManager() {
+	lock.Lock()
+	defer lock.Unlock()
+	profileCollection = loadProfileCollection(defaultProfileCollectionPath)
+	currentProfile = profileCollection.GetSelectedProfile()
+	currentSettings = retrieveSettings(currentProfile.Path)
+}
 
 func Get() *Settings {
-	return settings
-}
-
-func Reset() {
-	settings = NewSettings()
-}
-
-func Load() {
-	ctn, err := os.ReadFile(SETTINGS_FILE)
-	if err != nil {
-		log.Printf("error reading settings file: %v\n", err)
-		settings = NewSettings()
-		return
-	}
-	if err := json.Unmarshal(ctn, &settings); err != nil {
-		log.Printf("error unmarshalling settings file: %v\n", err)
-		settings = NewSettings()
-	}
-	settings.Normalize()
+	lock.RLock()
+	defer lock.RUnlock()
+	return currentSettings
 }
 
 func Save() {
-	data, err := json.MarshalIndent(settings, "", "    ")
-	if err != nil {
-		log.Printf("error marshalling settings file: %v\n", err)
+	SaveSettings(currentProfile, currentSettings)
+}
+
+func LoadSettings(profile Profile) *Settings {
+	lock.Lock()
+	defer lock.Unlock()
+	if profile.Name == currentProfile.Name {
+		return currentSettings
+	} else {
+		return retrieveSettings(profile.Path)
+	}
+}
+
+func ResetSettings(profile Profile) *Settings {
+	lock.Lock()
+	defer lock.Unlock()
+
+	newSettings := NewSettings()
+
+	if profile.Name == currentProfile.Name {
+		currentSettings = newSettings
+	}
+
+	persistSettings(profile.Path, newSettings)
+	return newSettings
+}
+
+func SaveSettings(profile Profile, settings *Settings) {
+	lock.Lock()
+	defer lock.Unlock()
+	if profile.Name == currentProfile.Name {
+		currentSettings = settings
+	}
+	persistSettings(profile.Path, settings)
+}
+
+func GetProfileNames() []string {
+	lock.RLock()
+	defer lock.RUnlock()
+
+	names := make([]string, len(profileCollection.Profiles))
+	for i, p := range profileCollection.Profiles {
+		names[i] = p.Name
+	}
+	return names
+}
+
+func GetProfiles() []Profile {
+	lock.RLock()
+	defer lock.RUnlock()
+	return profileCollection.Profiles
+}
+
+func GetProfile() Profile {
+	lock.RLock()
+	defer lock.RUnlock()
+	return currentProfile
+}
+
+func SelectProfile(value string) {
+	lock.Lock()
+	defer lock.Unlock()
+	if currentProfile.Name == value {
 		return
 	}
-	err = os.WriteFile(SETTINGS_FILE, data, 0777)
-	if err != nil {
-		log.Printf("error writing settings file: %v\n", err)
+
+	for i, p := range profileCollection.Profiles {
+		if p.Name == value {
+			profileCollection.SelectProfile(i)
+			saveProfileCollection(defaultProfileCollectionPath, profileCollection)
+			currentProfile = profileCollection.GetSelectedProfile()
+			currentSettings = retrieveSettings(currentProfile.Path)
+			break
+		}
 	}
+}
+
+func DeleteProfile(name string) {
+	lock.Lock()
+	defer lock.Unlock()
+	if currentProfile.Name == name {
+		return
+	}
+	for i, p := range profileCollection.Profiles {
+		if p.Name == name {
+			profileCollection.DeleteProfile(i)
+			saveProfileCollection(defaultProfileCollectionPath, profileCollection)
+			break
+		}
+	}
+}
+
+func AddProfile(profile Profile) error {
+	lock.Lock()
+	defer lock.Unlock()
+	for _, p := range profileCollection.Profiles {
+		if p.Name == profile.Name {
+			return errors.New("duplicated profile name")
+		}
+	}
+	profileCollection.AddProfile(profile)
+	saveProfileCollection(defaultProfileCollectionPath, profileCollection)
+	return nil
 }

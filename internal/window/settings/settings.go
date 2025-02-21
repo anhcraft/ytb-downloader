@@ -11,48 +11,68 @@ import (
 	"ytb-downloader/internal/constants"
 	"ytb-downloader/internal/constants/downloadmode"
 	"ytb-downloader/internal/constants/thumbnail"
-	"ytb-downloader/internal/resource"
 	"ytb-downloader/internal/settings"
 	"ytb-downloader/internal/ui/component"
-	"ytb-downloader/internal/window"
 )
 
-var win fyne.Window
+type activeWindow struct {
+	window fyne.Window
+	cfg    *settings.Settings
+}
 
-func OpenSettings(app fyne.App) fyne.Window {
-	if win != nil {
-		win.RequestFocus()
-		return win
+var active = make(map[string]*activeWindow)
+
+func OpenSettings(app fyne.App, profile settings.Profile) fyne.Window {
+	if win, ok := active[profile.Name]; ok {
+		win.window.RequestFocus()
+		return win.window
 	}
 
-	win = app.NewWindow("Settings")
-	win.SetContent(settingsContainer())
+	win := app.NewWindow("Settings | " + profile.Name)
+	active[profile.Name] = &activeWindow{
+		window: win,
+		cfg:    settings.LoadSettings(profile),
+	}
+
+	win.SetContent(settingsContainer(app, win, profile))
 	win.Resize(fyne.NewSize(constants.SettingWindowWidth, constants.SettingWindowHeight))
 	win.SetFixedSize(true)
 	win.SetPadded(true)
-	win.SetIcon(resource.ProgramIcon)
-	//win.CenterOnScreen()
+	win.SetIcon(theme.SettingsIcon())
 	win.Show()
 	win.SetOnClosed(func() {
-		settings.Save()
-		win = nil
+		settings.SaveSettings(profile, active[profile.Name].cfg)
+		delete(active, profile.Name)
 	})
 
 	return win
 }
 
-func settingsContainer() fyne.CanvasObject {
+func settingsContainer(app fyne.App, win fyne.Window, profile settings.Profile) fyne.CanvasObject {
+	cfg := active[profile.Name].cfg
+
+	clearSettings := widget.NewButtonWithIcon("Reset", theme.DeleteIcon(), func() {
+		dialog.ShowConfirm("Reset Settings", "Are you sure you want to reset all settings?", func(b bool) {
+			if b {
+				active[profile.Name].cfg = settings.ResetSettings(profile)
+				win.SetContent(settingsContainer(app, win, profile)) // reload
+			}
+		}, win)
+	})
+
+	////////////////////////////////////////////////////////
+
 	downloadFolderLabel := widget.NewLabel("Download Folder")
-	downloadFolderInput := component.NewAutoSaveInput(settings.Get().GetDownloadFolder, func(val string) {
-		settings.Get().SetDownloadFolder(val)
-		settings.Save()
+	downloadFolderInput := component.NewAutoSaveInput(cfg.GetDownloadFolder, func(val string) {
+		cfg.SetDownloadFolder(val)
+		settings.SaveSettings(profile, cfg)
 	}, requirePathIsFolder)
 	downloadFolderSelector := container.NewBorder(
 		nil,
 		nil,
 		nil,
 		widget.NewButton("...", func() {
-			component.OpenFolderSelector(settings.Get().GetDownloadFolder(), func(uri fyne.ListableURI, err error) {
+			component.OpenFolderSelector(cfg.GetDownloadFolder(), func(uri fyne.ListableURI, err error) {
 				if uri != nil {
 					downloadFolderInput.SetText(uri.Path())
 				}
@@ -62,16 +82,16 @@ func settingsContainer() fyne.CanvasObject {
 	)
 
 	ytdlpLabel := widget.NewLabel("Yt-dlp Path")
-	ytdlpPathInput := component.NewAutoSaveInput(settings.Get().GetYtdlpPath, func(val string) {
-		settings.Get().SetYtdlpPath(val)
-		settings.Save()
+	ytdlpPathInput := component.NewAutoSaveInput(cfg.GetYtdlpPath, func(val string) {
+		cfg.SetYtdlpPath(val)
+		settings.SaveSettings(profile, cfg)
 	}, requirePathIsFile)
 	ytdlpSelector := container.NewBorder(
 		nil,
 		nil,
 		nil,
 		widget.NewButton("...", func() {
-			component.OpenFileSelector(settings.Get().GetYtdlpPath(), func(uri fyne.URIReadCloser, err error) {
+			component.OpenFileSelector(cfg.GetYtdlpPath(), func(uri fyne.URIReadCloser, err error) {
 				if uri != nil {
 					ytdlpPathInput.SetText(uri.URI().Path())
 				}
@@ -81,16 +101,16 @@ func settingsContainer() fyne.CanvasObject {
 	)
 
 	ffmpegLabel := widget.NewLabel("FFmpeg Path")
-	ffmpegPathInput := component.NewAutoSaveInput(settings.Get().GetFfmpegPath, func(val string) {
-		settings.Get().SetFfmpegPath(val)
-		settings.Save()
+	ffmpegPathInput := component.NewAutoSaveInput(cfg.GetFfmpegPath, func(val string) {
+		cfg.SetFfmpegPath(val)
+		settings.SaveSettings(profile, cfg)
 	}, requirePathIsFile)
 	ffmpegSelector := container.NewBorder(
 		nil,
 		nil,
 		nil,
 		widget.NewButton("...", func() {
-			component.OpenFileSelector(settings.Get().GetFfmpegPath(), func(uri fyne.URIReadCloser, err error) {
+			component.OpenFileSelector(cfg.GetFfmpegPath(), func(uri fyne.URIReadCloser, err error) {
 				if uri != nil {
 					ffmpegPathInput.SetText(uri.URI().Path())
 				}
@@ -100,11 +120,11 @@ func settingsContainer() fyne.CanvasObject {
 	)
 
 	concurrentDownloads := binding.NewFloat()
-	_ = concurrentDownloads.Set(float64(settings.Get().GetConcurrentDownloads()))
+	_ = concurrentDownloads.Set(float64(cfg.GetConcurrentDownloads()))
 	concurrentDownloads.AddListener(binding.NewDataListener(func() {
 		if v, e := concurrentDownloads.Get(); e == nil {
-			settings.Get().SetConcurrentDownloads(uint32(v))
-			settings.Save()
+			cfg.SetConcurrentDownloads(uint32(v))
+			settings.SaveSettings(profile, cfg)
 		}
 	}))
 	concurrentDownloadsLabel := widget.NewLabel("Concurrent Downloads")
@@ -118,11 +138,11 @@ func settingsContainer() fyne.CanvasObject {
 	)
 
 	concurrentFragments := binding.NewFloat()
-	_ = concurrentFragments.Set(float64(settings.Get().GetConcurrentFragments()))
+	_ = concurrentFragments.Set(float64(cfg.GetConcurrentFragments()))
 	concurrentFragments.AddListener(binding.NewDataListener(func() {
 		if v, e := concurrentFragments.Get(); e == nil {
-			settings.Get().SetConcurrentFragments(uint32(v))
-			settings.Save()
+			cfg.SetConcurrentFragments(uint32(v))
+			settings.SaveSettings(profile, cfg)
 		}
 	}))
 	concurrentFragmentsLabel := widget.NewLabel("Concurrent Fragments")
@@ -139,31 +159,31 @@ func settingsContainer() fyne.CanvasObject {
 	disallowOverwriteSelector := widget.NewSelect(
 		[]string{downloadmode.Default, downloadmode.CustomDownloadOnly, downloadmode.YtdlpDownloadOnly},
 		func(value string) {
-			settings.Get().SetDisallowOverwrite(value)
-			settings.Save()
+			cfg.SetDisallowOverwrite(value)
+			settings.SaveSettings(profile, cfg)
 		})
-	disallowOverwriteSelector.SetSelected(settings.Get().GetDisallowOverwrite())
+	disallowOverwriteSelector.SetSelected(cfg.GetDisallowOverwrite())
 
 	thumbnailLabel := widget.NewLabel("Embed Thumbnail")
 	thumbnailSelector := widget.NewSelect(
 		[]string{thumbnail.Always, thumbnail.VideoOnly, thumbnail.AudioOnly, thumbnail.Never},
 		func(value string) {
-			settings.Get().SetEmbedThumbnail(value)
-			settings.Save()
+			cfg.SetEmbedThumbnail(value)
+			settings.SaveSettings(profile, cfg)
 		})
-	thumbnailSelector.SetSelected(settings.Get().GetEmbedThumbnail())
+	thumbnailSelector.SetSelected(cfg.GetEmbedThumbnail())
 
 	logPathLabel := widget.NewLabel("Path to log file")
-	logPathInput := component.NewAutoSaveInput(settings.Get().GetLogPath, func(val string) {
-		settings.Get().SetLogPath(val)
-		settings.Save()
+	logPathInput := component.NewAutoSaveInput(cfg.GetLogPath, func(val string) {
+		cfg.SetLogPath(val)
+		settings.SaveSettings(profile, cfg)
 	}, requirePathIsFile)
 	logPathSelector := container.NewBorder(
 		nil,
 		nil,
 		nil,
 		widget.NewButton("...", func() {
-			component.OpenFileSelector(settings.Get().GetLogPath(), func(uri fyne.URIReadCloser, err error) {
+			component.OpenFileSelector(cfg.GetLogPath(), func(uri fyne.URIReadCloser, err error) {
 				if uri != nil {
 					logPathInput.SetText(uri.URI().Path())
 				}
@@ -174,41 +194,25 @@ func settingsContainer() fyne.CanvasObject {
 
 	extraYtpOptLabel := widget.NewLabel("Extra Yt-dlp options (space separated)")
 	extraYtpOptInputBinding := binding.NewString()
-	_ = extraYtpOptInputBinding.Set(settings.Get().GetExtraYtdlpOptions())
+	_ = extraYtpOptInputBinding.Set(cfg.GetExtraYtdlpOptions())
 	extraYtpOptInputBinding.AddListener(binding.NewDataListener(func() {
 		v, _ := extraYtpOptInputBinding.Get()
-		settings.Get().SetExtraYtdlpOptions(v)
-		settings.Save()
+		cfg.SetExtraYtdlpOptions(v)
+		settings.SaveSettings(profile, cfg)
 	}))
 	extraYtpOptInput := widget.NewEntryWithData(extraYtpOptInputBinding)
 
-	locateSettingFile := widget.NewButton("Locate settings file", func() {
-		window.OpenExplorer(settings.SETTINGS_FILE)
-	})
-	locateSettingFile.SetIcon(theme.SearchIcon())
-
-	clearSettings := widget.NewButton("Reset settings", func() {
-		dialog.ShowConfirm("Reset Settings", "Are you sure you want to reset all settings?", func(b bool) {
-			if b {
-				settings.Reset()
-				settings.Save()
-				win.SetContent(settingsContainer()) // reload
-			}
-		}, win)
-	})
-	clearSettings.SetIcon(theme.DeleteIcon())
-
 	scriptFileLabel := widget.NewLabel("Script File")
-	scriptFileInput := component.NewAutoSaveInput(settings.Get().GetScriptFile, func(val string) {
-		settings.Get().SetScriptFile(val)
-		settings.Save()
+	scriptFileInput := component.NewAutoSaveInput(cfg.GetScriptFile, func(val string) {
+		cfg.SetScriptFile(val)
+		settings.SaveSettings(profile, cfg)
 	}, requirePathIsFileOrAbsent)
 	scriptFileSelector := container.NewBorder(
 		nil,
 		nil,
 		nil,
 		widget.NewButton("...", func() {
-			component.OpenFileSelector(settings.Get().GetScriptFile(), func(uri fyne.URIReadCloser, err error) {
+			component.OpenFileSelector(cfg.GetScriptFile(), func(uri fyne.URIReadCloser, err error) {
 				if uri != nil {
 					scriptFileInput.SetText(uri.URI().Path())
 				}
@@ -220,7 +224,6 @@ func settingsContainer() fyne.CanvasObject {
 	return container.NewVBox(
 		container.NewHBox(
 			layout.NewSpacer(),
-			locateSettingFile,
 			clearSettings,
 		),
 		container.New(
