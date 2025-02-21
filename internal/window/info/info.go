@@ -41,8 +41,8 @@ func OpenInfo(app fyne.App) fyne.Window {
 	go updateStats(ds, done)
 
 	win = app.NewWindow("Info")
-	win.SetContent(content(ds, win))
 	win.Resize(fyne.NewSize(constants.InfoWindowWidth, constants.InfoWindowHeight))
+	win.SetContent(content(ds, win))
 	win.SetFixedSize(true)
 	win.SetPadded(true)
 	win.SetIcon(resource.ProgramIcon)
@@ -56,12 +56,12 @@ func OpenInfo(app fyne.App) fyne.Window {
 }
 
 func content(ds *dynamicStats, win fyne.Window) fyne.CanvasObject {
-	appVersionLabel := component.NewCopyableLabel(fyne.CurrentApp().Metadata().Version, win)
-	execFileLabel := component.NewCopyableLabel(ExecutableFile(), win)
+	appVersionLabel := component.NewWrappedCopyableLabel(fyne.CurrentApp().Metadata().Version, win)
+	execFileLabel := component.NewWrappedCopyableLabel(ExecutableFile(), win)
 
-	osLabel := component.NewCopyableLabel(runtime.GOOS, win)
-	archLabel := component.NewCopyableLabel(runtime.GOARCH, win)
-	goVersionLabel := component.NewCopyableLabel(runtime.Version(), win)
+	osLabel := component.NewWrappedCopyableLabel(runtime.GOOS, win)
+	archLabel := component.NewWrappedCopyableLabel(runtime.GOARCH, win)
+	goVersionLabel := component.NewWrappedCopyableLabel(runtime.Version(), win)
 
 	homepageBtn := widget.NewButton("Homepage", func() {
 		err := window.OpenURL("https://github.com/anhcraft/ytb-downloader")
