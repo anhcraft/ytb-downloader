@@ -177,7 +177,7 @@ func settingsContainer(app fyne.App, win fyne.Window, profile settings.Profile) 
 	logPathInput := component.NewAutoSaveInput(cfg.GetLogPath, func(val string) {
 		cfg.SetLogPath(val)
 		settings.SaveSettings(profile, cfg)
-	}, requirePathIsFile)
+	}, requirePathIsFileOrAbsent)
 	logPathSelector := container.NewBorder(
 		nil,
 		nil,
