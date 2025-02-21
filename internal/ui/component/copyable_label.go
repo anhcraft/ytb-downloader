@@ -2,7 +2,6 @@ package component
 
 import (
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -25,13 +24,11 @@ func NewCopyableLabel(text string, win fyne.Window) *CopyableLabel {
 	return label
 }
 
-func NewWrappedCopyableLabel(text string, win fyne.Window, height float32) *container.Scroll {
+func NewWrappedCopyableLabel(text string, win fyne.Window) *CopyableLabel {
 	label := NewCopyableLabel(text, win)
 	label.Truncation = fyne.TextTruncateOff
-	label.Wrapping = fyne.TextWrapBreak
-	scroll := container.NewVScroll(label)
-	scroll.SetMinSize(fyne.NewSize(0, height))
-	return scroll
+	label.Wrapping = fyne.TextWrapWord
+	return label
 }
 
 func (c *CopyableLabel) TappedSecondary(e *fyne.PointEvent) {

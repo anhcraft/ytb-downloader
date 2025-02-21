@@ -22,11 +22,11 @@ func OpenRequestDebugViewer(app fyne.App, req *request.Request) fyne.Window {
 	}
 
 	win := app.NewWindow("Debug")
+	win.Resize(fyne.NewSize(constants.RequestDebugWindowWidth, constants.RequestDebugWindowHeight))
 	win.SetContent(container.NewVBox(content(req, win)))
 	win.SetFixedSize(true)
 	win.SetPadded(true)
 	win.SetIcon(resource.ProgramIcon)
-	win.Resize(fyne.NewSize(constants.RequestDebugWindowWidth, constants.RequestDebugWindowHeight))
 	win.Show()
 	win.SetOnClosed(func() {
 		delete(active, req)
@@ -36,14 +36,14 @@ func OpenRequestDebugViewer(app fyne.App, req *request.Request) fyne.Window {
 }
 
 func content(req *request.Request, win fyne.Window) fyne.CanvasObject {
-	inputEntry := component.NewCopyableLabel(req.Input(), win)
-	titleEntry := component.NewCopyableLabel(req.Title(), win)
-	urlEntry := component.NewCopyableLabel(req.RawUrl(), win)
-	formatEntry := component.NewCopyableLabel(req.Format(), win)
-	errorLogEntry := component.NewWrappedCopyableLabel(fmt.Sprint(req.DownloadError()), win, 120)
+	inputEntry := component.NewWrappedCopyableLabel(req.Input(), win)
+	titleEntry := component.NewWrappedCopyableLabel(req.Title(), win)
+	urlEntry := component.NewWrappedCopyableLabel(req.RawUrl(), win)
+	formatEntry := component.NewWrappedCopyableLabel(req.Format(), win)
+	errorLogEntry := component.NewWrappedCopyableLabel(fmt.Sprint(req.DownloadError()), win)
 
 	if req.Custom() {
-		filePathEntry := component.NewCopyableLabel(req.FilePath(), win)
+		filePathEntry := component.NewWrappedCopyableLabel(req.FilePath(), win)
 		return container.New(
 			layout.NewFormLayout(),
 			widget.NewLabel("Input:"), inputEntry,
@@ -55,8 +55,8 @@ func content(req *request.Request, win fyne.Window) fyne.CanvasObject {
 		)
 	}
 
-	titleFetchCmdEntry := component.NewWrappedCopyableLabel(req.GetTitleFetchCommand(), win, 120)
-	downloadCmdEntry := component.NewWrappedCopyableLabel(req.GetDownloadCommand(), win, 200)
+	titleFetchCmdEntry := component.NewWrappedCopyableLabel(req.GetTitleFetchCommand(), win)
+	downloadCmdEntry := component.NewWrappedCopyableLabel(req.GetDownloadCommand(), win)
 
 	return container.New(
 		layout.NewFormLayout(),
