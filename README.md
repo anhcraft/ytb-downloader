@@ -6,7 +6,7 @@
 
 A simple GUI for yt-dlp. [Download here](https://github.com/anhcraft/ytb-downloader/releases)
 
-![https://i.imgur.com/zpvzS7y.png](https://i.imgur.com/zpvzS7y.png)
+![https://i.imgur.com/UtKVy6k.png](https://i.imgur.com/UtKVy6k.png)
 
 ## Features
 - Support various websites (as long as yt-dlp supports)
@@ -22,6 +22,7 @@ A simple GUI for yt-dlp. [Download here](https://github.com/anhcraft/ytb-downloa
 - Logging to file and console
 - CJK font support
 - Scripting support using [Tengo](https://tengolang.com/) (see below)
+- Multiple setting profiles
 
 ## Requirement
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp)
